@@ -37,7 +37,7 @@
             android:textStyle="bold" />
 
             <EditText
-                android:id="@+id/ed_id"
+                android:id="@+id/et_id"
                 android:layout_width="280dp"
                 android:layout_height="40dp"
                 android:layout_gravity="center"
