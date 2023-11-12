@@ -40,8 +40,8 @@
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/id_cardview"
-            android:layout_width="280dp"
-            android:layout_height="40dp"
+            android:layout_width="300dp"
+            android:layout_height="50dp"
             android:layout_gravity="center"
             app:cardBackgroundColor="#FFFFFF"
             app:cardCornerRadius="10dp"
@@ -63,7 +63,7 @@
                     />
 
                 <EditText
-                    android:id="@+id/ed_id"
+                    android:id="@+id/et_id"
                     android:layout_width="200dp"
                     android:layout_height="35dp"
                     android:background="@android:color/transparent" />
@@ -74,10 +74,10 @@
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/pw_cardview"
-            android:layout_width="280dp"
-            android:layout_height="40dp"
+            android:layout_width="300dp"
+            android:layout_height="50dp"
             android:layout_gravity="center"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="15dp"
             app:cardBackgroundColor="#FFFFFF"
             app:cardCornerRadius="10dp"
             app:cardElevation="4dp">
@@ -99,7 +99,7 @@
 
                 <EditText
                     android:id="@+id/et_pass"
-                    android:layout_width="180dp"
+                    android:layout_width="190dp"
                     android:layout_height="35dp"
                     android:background="@android:color/transparent" />
 
@@ -119,7 +119,7 @@
 
 
         <LinearLayout
-            android:layout_width="280dp"
+            android:layout_width="300dp"
             android:layout_height="40dp"
             android:layout_gravity="center"
             android:layout_marginTop="5dp"
@@ -130,8 +130,7 @@
                 android:layout_width="20dp"
                 android:layout_height="20dp"
                 android:layout_gravity="center"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
+                android:layout_marginRight="5dp"
                 android:background="@drawable/unchecked" />
 
             <TextView
@@ -151,7 +150,8 @@
                 android:background="#00000000"
                 android:text="비밀번호 찾기"
                 android:textColor="#FF7A01"
-                android:textSize="15dp" />
+                android:padding="0dp"
+                android:textSize="13dp" />
 
         </LinearLayout>
 
@@ -169,6 +169,13 @@
             app:layout_constraintEnd_toEndOf="@+id/et_pass"
             app:layout_constraintStart_toStartOf="@+id/et_pass"
             app:layout_constraintTop_toBottomOf="@+id/et_pass" />
+
+        <View
+            android:layout_width="300dp"
+            android:layout_height="1dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="10dp"
+            android:background="#72634A"/>
 
 
             <TextView

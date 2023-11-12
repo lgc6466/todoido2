@@ -3,6 +3,7 @@ package com.example.todoido;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -18,22 +19,28 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.HashMap;
 
-public class RegisterActivity extends AppCompatActivity {
 
+public class RegisterActivity extends AppCompatActivity {
+    private FirebaseAuth Auth;
+    private DatabaseReference Ref;
+    ProgressDialog pd;
     EditText et_name, et_id, et_pass, et_pass2, et_email;
     Button btn_register;
     ImageButton eye, eye2;
     private boolean isEyeOff = true;
-    FirebaseAuth auth;
-    DatabaseReference reference;
-    ProgressDialog pd;
 
+
+    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,7 +55,7 @@ public class RegisterActivity extends AppCompatActivity {
         eye2 = findViewById(R.id.eye2);
         btn_register = findViewById(R.id.btn_register);
 
-        auth = FirebaseAuth.getInstance();
+        Auth = FirebaseAuth.getInstance();
 
         btn_register.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -67,7 +74,6 @@ public class RegisterActivity extends AppCompatActivity {
                 }
             }
         });
-
 
 
         // 보이기 숨기기 이미지버튼
@@ -106,41 +112,67 @@ public class RegisterActivity extends AppCompatActivity {
 
 
     }
-    private void register(String username, String fullname, String email, String password){
-        auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(RegisterActivity.this, new OnCompleteListener<AuthResult>() {
+
+    private void register(String username, String id, String email, String password){
+        Auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(RegisterActivity.this, new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if(task.isSuccessful()){
-                    FirebaseUser firebaseUser = auth.getCurrentUser();
+                    FirebaseUser firebaseUser = Auth.getCurrentUser();
                     String userid = firebaseUser.getUid();
 
-                    reference = FirebaseDatabase.getInstance().getReference().child("Users").child(userid);
+                    Ref = FirebaseDatabase.getInstance().getReference().child("Users");
 
-                    HashMap<String, Object> hashMap = new HashMap<>();
-                    hashMap.put("id", userid);
-                    hashMap.put("username", username.toLowerCase());
-                    hashMap.put("fullname", fullname);
-                    hashMap.put("bio", "");
-                    hashMap.put("imageurl", "https://firebasestorage.googleapis.com/v0/b/smsfirebase-cbc65.appspot.com/o/person.png?alt=media&token=9dcd124e-fe98-4cd5-9af3-17ee6dfcf603");
-
-                    reference.setValue(hashMap).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    // Check if id already exists in the database
+                    Ref.orderByChild("id").equalTo(id.toLowerCase()).addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            if(task.isSuccessful()){
-                                pd.dismiss();
-                                Toast.makeText(RegisterActivity.this, "회원가입에 성공하였습니다. 로그인 창으로 돌아갑니다.", Toast.LENGTH_SHORT).show();
-                                Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
-                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                                startActivity(intent);
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            if (dataSnapshot.exists()) {
+                                // id already exists
+                                Toast.makeText(RegisterActivity.this, "이미 존재하는 아이디입니다.", Toast.LENGTH_SHORT).show();
+                            } else {
+                                // id doesn't exist, save the user data
+                                DatabaseReference userRef = Ref.child(userid);
+                                HashMap<String, Object> hashMap = new HashMap<>();
+                                hashMap.put("id", id.toLowerCase()); // Save the id as lowercase
+                                hashMap.put("username", username);
+                                hashMap.put("email", email); // 이메일 정보 추가
+                                hashMap.put("bio", "");
+                                hashMap.put("imageurl", "https://firebasestorage.googleapis.com/v0/b/smsfirebase-cbc65.appspot.com/o/person.png?alt=media&token=9dcd124e-fe98-4cd5-9af3-17ee6dfcf603");
+
+                                userRef.setValue(hashMap).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if(task.isSuccessful()){
+                                            pd.dismiss();
+                                            Toast.makeText(RegisterActivity.this, "회원가입에 성공하였습니다. 로그인 창으로 돌아갑니다.", Toast.LENGTH_SHORT).show();
+                                            Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
+                                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                            startActivity(intent);
+                                        }
+                                    }
+                                });
                             }
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
                         }
                     });
                 } else {
                     pd.dismiss();
-                    Toast.makeText(RegisterActivity.this, "입력하신 이메일과 비밀번호는 가입할 수 없습니다.", Toast.LENGTH_SHORT).show();
-
+                    if (task.getException() instanceof FirebaseAuthUserCollisionException) {
+                        Toast.makeText(RegisterActivity.this, "이미 가입된 이메일입니다.", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(RegisterActivity.this, "입력하신 이메일과 비밀번호는 가입할 수 없습니다.", Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
         });
     }
+
+
+
+
 }
