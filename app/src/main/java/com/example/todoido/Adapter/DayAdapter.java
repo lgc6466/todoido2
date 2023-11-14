@@ -3,8 +3,8 @@ package com.example.todoido.Adapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -31,8 +31,8 @@ public class DayAdapter extends RecyclerView.Adapter<DayAdapter.DayViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull DayViewHolder holder, int position) {
         String item = items.get(position);
-        holder.timeTextView.setText(item);
-        holder.contentTextView.setText(item);
+        holder.timeEditText.setText(item);
+        holder.contentEditText.setText(item);
 
         holder.closeButton.setOnClickListener(new View.OnClickListener() {
             //x버튼
@@ -55,14 +55,14 @@ public class DayAdapter extends RecyclerView.Adapter<DayAdapter.DayViewHolder> {
 
     static class DayViewHolder extends RecyclerView.ViewHolder {
 
-        TextView timeTextView;
-        TextView contentTextView;
+        EditText timeEditText;
+        EditText contentEditText;
         ImageButton closeButton;
 
         DayViewHolder(View itemView) {
             super(itemView);
-            timeTextView = itemView.findViewById(R.id.timeTextView);
-            contentTextView = itemView.findViewById(R.id.contentTextView);
+            timeEditText = itemView.findViewById(R.id.timeEditText);
+            contentEditText = itemView.findViewById(R.id.contentEditText);
             closeButton = itemView.findViewById(R.id.closeButton);
         }
     }
