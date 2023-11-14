@@ -38,9 +38,8 @@ public class LoginActivity extends AppCompatActivity {
     ProgressDialog pd;
     EditText et_id, et_pass;
     Button btn_login, btn_register;
-    Button checkbox;
     private boolean isChecked = false;
-    ImageButton eye;
+    ImageButton eye, checkbox;
     private boolean isEyeOff = true;
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
