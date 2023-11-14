@@ -40,9 +40,6 @@ public class DayFragment extends Fragment {
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // 새 항목 추가
-                items.add("New Item");
-
                 // 어댑터에 데이터가 변경되었음을 알림
                 adapter.notifyDataSetChanged();
             }
