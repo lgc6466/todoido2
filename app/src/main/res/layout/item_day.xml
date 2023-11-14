@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <ImageView
+        android:layout_width="320dp"
+        android:layout_height="120dp"
+        android:background="@drawable/daybox"
+        android:layout_marginBottom="15dp"/>
+
+    <TextView
+        android:id="@+id/timeTextView"
+        android:layout_width="230dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="35dp"
+        android:gravity="left"
+        android:textSize="18dp"
+        android:hint="시간" />
+
+    <TextView
+        android:id="@+id/contentTextView"
+        android:layout_width="230dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:layout_marginLeft="35dp"
+        android:gravity="left"
+        android:textSize="14dp"
+        android:maxLines="2"
+        android:hint="내용" />
+
+    <ImageButton
+        android:id="@+id/closeButton"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginLeft="270dp"
+        android:background="@drawable/close" />
+
+</RelativeLayout>
