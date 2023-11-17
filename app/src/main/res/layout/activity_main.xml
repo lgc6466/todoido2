@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -6,26 +5,46 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <androidx.coordinatorlayout.widget.CoordinatorLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/top"
-        android:layout_alignParentTop="true">
+        android:id="@+id/top_wrap">
 
-        <com.google.android.material.bottomnavigation.BottomNavigationView
-            android:id="@+id/navigation"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:layout_alignParentTop="true"
-            android:background="#DA9393"
-            app:menu="@menu/navigation" />
+            android:layout_height="60dp"
+            android:id="@+id/toplogo"
+            android:gravity="center"
+            android:orientation="vertical">
 
-    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+            <ImageView
+                android:layout_width="127dp"
+                android:layout_height="30dp"
+                android:background="@drawable/logo2"
+                />
+
+        </LinearLayout>
+
+
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tab_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/toplogo"
+            android:foregroundTint="@color/black"
+            app:tabMode="fixed"
+            app:tabGravity="fill"
+            app:tabTextColor="@color/not_selected_tab_text_color"
+            app:tabSelectedTextColor="@color/selected_tab_text_color"
+            app:tabIndicatorColor="@color/selected_tab_text_color"
+            />
+
+    </RelativeLayout>
 
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/top"
+        android:layout_below="@+id/top_wrap"
         android:id="@+id/fragment_container" />
 
 </RelativeLayout>

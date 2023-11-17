@@ -2,6 +2,7 @@ package com.example.todoido;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -11,6 +12,7 @@ import com.example.todoido.Fragment.MonthFragment;
 import com.example.todoido.Fragment.WeekFragment;
 import com.example.todoido.Fragment.YearFragment;
 import com.google.android.material.navigation.NavigationBarView;
+import com.google.android.material.tabs.TabLayout;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -24,6 +26,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         dayFragment = new DayFragment();
         monthFragment = new MonthFragment();
         weekFragment = new WeekFragment();
@@ -31,25 +34,40 @@ public class MainActivity extends AppCompatActivity {
 
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, dayFragment).commit();
 
-        NavigationBarView navigationBarView = findViewById(R.id.navigation);
-        navigationBarView.setOnItemSelectedListener(item -> {
-            int itemId = item.getItemId();
-            if (itemId == R.id.nav_day) {
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, dayFragment).commit();
-                return true;
-            } else if (itemId == R.id.nav_month) {
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, monthFragment).commit();
-                return true;
-            } else if (itemId == R.id.nav_week) {
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, weekFragment).commit();
-                return true;
-            } else if (itemId == R.id.nav_year) {
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, weekFragment).commit();
-                return true;
+        @SuppressLint({"MissingInflatedId", "LocalSuppress"}) TabLayout tabLayout = findViewById(R.id.tab_layout);
+        tabLayout.addTab(tabLayout.newTab().setText("Day"));
+        tabLayout.addTab(tabLayout.newTab().setText("Week"));
+        tabLayout.addTab(tabLayout.newTab().setText("Month"));
+        tabLayout.addTab(tabLayout.newTab().setText("Year"));
+        tabLayout.addTab(tabLayout.newTab().setText("Set"));
+
+        tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                switch (tab.getPosition()) {
+                    case 0:
+                        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, dayFragment).commit();
+                        break;
+                    case 1:
+                        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, weekFragment).commit();
+                        break;
+                    case 2:
+                        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, monthFragment).commit();
+                        break;
+                    case 3:
+                        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, yearFragment).commit();
+                        break;
+                }
             }
-            return false;
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {}
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {}
         });
     }
+
 
 
 }
