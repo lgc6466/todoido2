@@ -21,7 +21,8 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public static final int BUTTON_VIEW_TYPE = 3;
 
     // + 버튼이 처음 눌렸는지를 저장하는 변수
-    private boolean isFirstClick = true;
+    // 이 변수를 전역 변수로 선언
+    public static boolean isFirstClick = true;
 
     // context를 멤버 변수로 선언
     private Context context;
@@ -85,7 +86,6 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             buttonHolder.addButton.setOnClickListener(v -> {
                 addItem("");
                 moveButtonToEnd();
-                isFirstClick = false;
             });
         }
     }
@@ -106,13 +106,39 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         public int getViewType() {
             return viewType;
         }
+
+        public boolean isButton() {
+            return viewType == BUTTON_VIEW_TYPE;
+        }
     }
 
     // 아이템 추가 메소드
     public void addItem(String content) {
         int viewType = new Random().nextInt(3);
+
+        // + 버튼이 이미 있는지 확인
+        boolean hasButton = false;
+        int buttonIndex = -1;
+        for (int i = 0; i < items.size(); i++) {
+            if (items.get(i).isButton()) {
+                hasButton = true;
+                buttonIndex = i;
+                break;
+            }
+        }
+
+        // + 버튼이 있으면 리스트에서 제거
+        if (hasButton) {
+            items.remove(buttonIndex);
+        }
+
+        // 새로운 아이템 추가
         items.add(new CardItem(content, viewType));
-        notifyItemInserted(items.size() - 1);
+
+        if (isFirstClick) {
+            isFirstClick = false;
+        }
+        notifyDataSetChanged();
     }
 
     // 아이템 삭제 메소드
