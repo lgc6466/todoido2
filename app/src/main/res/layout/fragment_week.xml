@@ -5,9 +5,11 @@
     android:layout_height="match_parent"
     tools:context=".Fragment.WeekFragment">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="week" />
+
+        <androidx.viewpager.widget.ViewPager
+            android:id="@+id/week_viewPager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
 
 </FrameLayout>

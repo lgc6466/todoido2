@@ -6,6 +6,10 @@
         <item name="colorPrimary">@color/white</item>
         <item name="colorPrimaryDark">@color/white</item>
         <item name="colorAccent">@color/white</item>
+
+        <item name="android:windowBackground">@color/F4E87A</item>
+        <item name="android:statusBarColor">@color/white</item>
+        <item name="android:windowLightStatusBar">true</item>
     </style>
 
     <style name="Theme.Todoido" parent="Base.Theme.Todoido" />
