@@ -3,19 +3,53 @@ package com.example.todoido.Fragment;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 
+import com.example.todoido.Adapter.CardAdapter;
+import com.example.todoido.Adapter.DayAdapter;
 import com.example.todoido.R;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class MonthFragment extends Fragment {
+
+    ArrayList<String> items = new ArrayList<>();
+    CardAdapter adapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_month, container, false);
+        View view = inflater.inflate(R.layout.fragment_month, container, false);
+
+        // RecyclerView와 어댑터 초기화
+        RecyclerView recyclerView = view.findViewById(R.id.monthRecyclerView);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
+        layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
+        recyclerView.setLayoutManager(layoutManager);
+        adapter = new CardAdapter(items);
+        recyclerView.setAdapter(adapter);
+
+        // 이미지 버튼에 클릭 리스너 설정
+        ImageButton addButton = view.findViewById(R.id.addButton);
+        addButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // 새 항목 추가
+                items.add("New Item");
+
+                // 어댑터에 데이터가 변경되었음을 알림
+                adapter.notifyDataSetChanged();
+            }
+        });
+
+        return view;
     }
 }
