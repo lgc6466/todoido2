@@ -25,7 +25,10 @@
             android:hint="내용을 입력하세요"
             android:textColor="#5B4F3B"
             android:textColorHint="#BF7C7C7C"
-            android:background="@android:color/transparent"/>
+            android:inputType="textNoSuggestions"
+            android:background="@android:color/transparent"
+            android:textCursorDrawable="@color/selected_tab_text_color"/>
+
     </LinearLayout>
 
 
