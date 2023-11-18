@@ -53,7 +53,8 @@
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="50dp"
                 android:orientation="horizontal"
-                android:padding="10dp">
+                android:padding="10dp"
+                android:gravity="center">
 
                 <ImageView
                     android:id="@+id/mainImageView"
@@ -65,13 +66,21 @@
                 <EditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp"
+                    android:layout_marginTop="5dp"
                     android:background="@android:color/transparent"
                     android:hint="이번주 목표를 입력하세요"
                     android:textColor="#5B4F3B"
                     android:textColorHint="#BF7C7C7C" />
 
             </LinearLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerView"
+                android:layout_width="280dp"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:layout_gravity="center"
+                android:scrollbars="vertical" />
 
 
         </LinearLayout>
