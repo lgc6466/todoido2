@@ -20,27 +20,12 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private ArrayList<CardItem> items;
     public static final int BUTTON_VIEW_TYPE = 3;
 
-    // + 버튼이 처음 눌렸는지를 저장하는 변수
-    private boolean isFirstClick = true;
-
     // context를 멤버 변수로 선언
     private Context context;
 
     public CardAdapter(ArrayList<CardItem> items, Context context) {
         this.items = items;
         this.context = context;
-
-        // '+' 버튼이 이미 있는지 확인하고, 없으면 추가
-        boolean isButtonPresent = false;
-        for (CardItem item : items) {
-            if (item.getViewType() == BUTTON_VIEW_TYPE) {
-                isButtonPresent = true;
-                break;
-            }
-        }
-        if (!isButtonPresent) {
-            items.add(new CardItem("", BUTTON_VIEW_TYPE));
-        }
     }
 
     @Override
@@ -62,9 +47,6 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             case 2:
                 view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_month3, parent, false);
                 return new ViewHolder3(view);
-            case BUTTON_VIEW_TYPE:
-                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_button, parent, false);
-                return new ButtonViewHolder(view);
         }
         return null;
     }
@@ -86,19 +68,6 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             ViewHolder3 viewHolder3 = (ViewHolder3) holder;
             viewHolder3.contentEditText.setText(content);
             viewHolder3.closeButton.setOnClickListener(v -> removeItem(holder.getAdapterPosition()));
-        } else if (holder instanceof ButtonViewHolder) {
-            ButtonViewHolder buttonHolder = (ButtonViewHolder) holder;
-
-            ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) buttonHolder.itemView.getLayoutParams();
-            // + 버튼이 처음 눌렸을 경우에만 마진을 설정
-            params.topMargin = isFirstClick ? 0 : (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 100, context.getResources().getDisplayMetrics());
-            buttonHolder.itemView.setLayoutParams(params);
-
-            buttonHolder.addButton.setOnClickListener(v -> {
-                addItem("");
-                moveButtonToEnd();
-                isFirstClick = false;
-            });
         }
     }
 
@@ -133,13 +102,6 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         notifyDataSetChanged();
     }
 
-    // '버튼' 아이템을 리스트의 마지막으로 이동하는 메소드
-    public void moveButtonToEnd() {
-        CardItem buttonItem = items.remove(items.size() - 2);
-        items.add(buttonItem);
-        notifyDataSetChanged();
-    }
-
     static class ViewHolder1 extends RecyclerView.ViewHolder {
         EditText contentEditText;
         ImageButton closeButton;
@@ -170,15 +132,6 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             super(itemView);
             contentEditText = itemView.findViewById(R.id.contentEditText);
             closeButton = itemView.findViewById(R.id.closeButton);
-        }
-    }
-
-    static class ButtonViewHolder extends RecyclerView.ViewHolder {
-        ImageButton addButton;
-
-        ButtonViewHolder(View itemView) {
-            super(itemView);
-            addButton = itemView.findViewById(R.id.addButton);
         }
     }
 

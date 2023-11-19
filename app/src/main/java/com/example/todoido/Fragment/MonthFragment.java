@@ -9,12 +9,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 
 import com.example.todoido.Adapter.CardAdapter;
 import com.example.todoido.R;
 
 import java.util.ArrayList;
-import java.util.Random;
 
 public class MonthFragment extends Fragment {
 
@@ -26,16 +26,17 @@ public class MonthFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_month, container, false);
 
+        // RecyclerView와 CardAdapter 설정
         RecyclerView recyclerView = view.findViewById(R.id.monthRecyclerView);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
-        recyclerView.setLayoutManager(layoutManager);
-
-        // '버튼' 아이템을 아이템 리스트에 추가
-        items.add(new CardAdapter.CardItem("", CardAdapter.BUTTON_VIEW_TYPE));
-
-        // CardAdapter의 생성자에 Context를 전달
-        adapter = new CardAdapter(items, getContext());
+        adapter = new CardAdapter(new ArrayList<>(), getContext());
         recyclerView.setAdapter(adapter);
+
+        // '+' 버튼 설정
+        ImageButton addButton = view.findViewById(R.id.addButton);
+        addButton.setOnClickListener(v -> {
+            adapter.addItem("");
+            adapter.notifyDataSetChanged();
+        });
 
         return view;
     }
