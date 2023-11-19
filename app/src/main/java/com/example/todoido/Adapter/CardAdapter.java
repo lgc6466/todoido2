@@ -37,8 +37,10 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
     // 이미지를 설정할 메소드
     public void setImageUri(Uri uri, int position) {
         CardItem item = items.get(position);
-        item.setImageUri(uri);
-        notifyItemChanged(position);
+        if (item.getImageUri() == null) {  // 이미지가 설정되어 있지 않은 경우에만 이미지 설정
+            item.setImageUri(uri);
+            notifyItemChanged(position);
+        }
     }
 
     @NonNull
@@ -89,7 +91,12 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
             public void onClick(View v) {
                 Intent intent = new Intent(Intent.ACTION_PICK);
                 intent.setType("image/*");
-                mGetContent.launch(intent);
+
+                // 클릭 리스너 안에서 현재 아이템의 위치를 기억
+                int currentPosition = holder.getAdapterPosition();
+                if (currentPosition != RecyclerView.NO_POSITION) {  // 위치가 유효한 경우에만 인텐트를 실행
+                    mGetContent.launch(intent);
+                }
             }
         });
     }
@@ -102,6 +109,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
         public CardItem(String content, int viewType) {
             this.content = content;
             this.viewType = viewType;
+            this.imageUri = null;
         }
 
         public String getContent() {
