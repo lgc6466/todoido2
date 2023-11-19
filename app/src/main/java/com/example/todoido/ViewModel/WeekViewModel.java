@@ -24,7 +24,7 @@ public class WeekViewModel extends ViewModel {
     }
 
     private void fetchWeekData() {
-        databaseRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        databaseRef.addValueEventListener(new ValueEventListener() {
 
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -49,6 +49,7 @@ public class WeekViewModel extends ViewModel {
             }
         });
     }
+
 
 
 
