@@ -80,8 +80,11 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
         if (item.getImageUri() != null) {
             Glide.with(holder.monthPic.getContext())
                     .load(item.getImageUri())
-                    .centerCrop()  // 이미지를 ImageView에 맞게 조정
+                    .centerCrop()
                     .into(holder.monthPic);
+        } else {
+            // 이미지가 설정되어 있지 않은 경우 ImageView를 초기화
+            holder.monthPic.setImageDrawable(null);
         }
 
         // gallerybtn 찾기와 클릭 리스너 설정
