@@ -1,15 +1,21 @@
 package com.example.todoido.Adapter;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 
+import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager2.widget.ViewPager2;
 
+import com.bumptech.glide.Glide;
 import com.example.todoido.R;
 
 import java.util.ArrayList;
@@ -18,16 +24,40 @@ import java.util.Random;
 public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder> {
     private ArrayList<CardItem> items;
     private Context context;
+    private ViewPager2 viewPager;
+    private ActivityResultLauncher<Intent> mGetContent;
 
-    public CardAdapter(ArrayList<CardItem> items, Context context) {
+    public CardAdapter(ArrayList<CardItem> items, Context context, ViewPager2 viewPager, ActivityResultLauncher<Intent> mGetContent) {
         this.items = items;
         this.context = context;
+        this.viewPager = viewPager;
+        this.mGetContent = mGetContent;
+    }
+
+    // 이미지를 설정할 메소드
+    public void setImageUri(Uri uri, int position) {
+        CardItem item = items.get(position);
+        item.setImageUri(uri);
+        notifyItemChanged(position);
     }
 
     @NonNull
     @Override
     public CardViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_month1, parent, false);
+        View view;
+        switch (viewType) {
+            case 0:
+                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_month1, parent, false);
+                break;
+            case 1:
+                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_month2, parent, false);
+                break;
+            case 2:
+                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_month3, parent, false);
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid view type");
+        }
         return new CardViewHolder(view);
     }
 
@@ -37,39 +67,95 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
         String content = item.getContent();
 
         holder.contentEditText.setText(content);
-        holder.closeButton.setOnClickListener(v -> removeItem(position));
+        holder.closeButton.setOnClickListener(v -> {
+            int currentPosition = holder.getAdapterPosition();
+            if (currentPosition != RecyclerView.NO_POSITION) {
+                removeItem(currentPosition, () -> viewPager.setCurrentItem(viewPager.getCurrentItem(), false));
+            }
+        });
+
+        // 이미지가 설정되어 있는 경우 ImageView에 이미지 설정
+        if (item.getImageUri() != null) {
+            Glide.with(holder.monthPic.getContext())
+                    .load(item.getImageUri())
+                    .centerCrop()  // 이미지를 ImageView에 맞게 조정
+                    .into(holder.monthPic);
+        }
+
+        // gallerybtn 찾기와 클릭 리스너 설정
+        ImageButton galleryBtn = holder.itemView.findViewById(R.id.gallerybtn);
+        galleryBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Intent.ACTION_PICK);
+                intent.setType("image/*");
+                mGetContent.launch(intent);
+            }
+        });
     }
+
     public static class CardItem {
         private String content;
+        private int viewType;
+        private Uri imageUri;
 
-        public CardItem(String content) {
+        public CardItem(String content, int viewType) {
             this.content = content;
+            this.viewType = viewType;
         }
 
         public String getContent() {
             return content;
         }
+
+        public int getViewType() {
+            return viewType;
+        }
+
+        // 이미지 Uri getter와 setter 추가
+        public Uri getImageUri() {
+            return imageUri;
+        }
+
+        public void setImageUri(Uri imageUri) {
+            this.imageUri = imageUri;
+        }
     }
 
     public void addItem(String content) {
-        items.add(new CardItem(content));
+        int viewType = new Random().nextInt(3);
+        items.add(new CardItem(content, viewType));
         notifyItemInserted(items.size() - 1);
     }
 
-    public void removeItem(int position) {
+    public void removeItem(int position, Runnable afterRemoval) {
         items.remove(position);
-        notifyDataSetChanged();
+        notifyItemRemoved(position);
+        if (afterRemoval != null) {
+            afterRemoval.run();
+        }
+        viewPager.post(() -> {
+            viewPager.setCurrentItem(viewPager.getCurrentItem());
+            viewPager.getAdapter().notifyDataSetChanged();
+        });
     }
 
     static class CardViewHolder extends RecyclerView.ViewHolder {
         EditText contentEditText;
         ImageButton closeButton;
+        ImageView monthPic;
 
         CardViewHolder(View itemView) {
             super(itemView);
             contentEditText = itemView.findViewById(R.id.contentEditText);
             closeButton = itemView.findViewById(R.id.closeButton);
+            monthPic = itemView.findViewById(R.id.monthpic);
         }
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return items.get(position).getViewType();
     }
 
     @Override
