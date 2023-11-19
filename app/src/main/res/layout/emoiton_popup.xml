@@ -2,38 +2,44 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:background="@drawable/popup_bg"
         android:orientation="horizontal"
-        android:padding="5dp"
-        android:background="@drawable/popup_bg">
+        android:padding="5dp">
 
         <ImageView
             android:id="@+id/happy"
-            android:src="@drawable/happy"
-            android:layout_width="50dp"
-            android:layout_height="50dp"/>
+            android:layout_width="45dp"
+            android:layout_height="50dp"
+            android:layout_marginLeft="10dp"
+            android:src="@drawable/happy" />
+
         <ImageView
             android:id="@+id/smile"
-            android:src="@drawable/smile"
-            android:layout_width="50dp"
-            android:layout_height="50dp"/>
+            android:layout_width="45dp"
+            android:layout_height="50dp"
+            android:src="@drawable/smile" />
+
         <ImageView
             android:id="@+id/soso"
-            android:src="@drawable/soso"
-            android:layout_width="50dp"
-            android:layout_height="50dp"/>
+            android:layout_width="45dp"
+            android:layout_height="50dp"
+            android:src="@drawable/soso" />
+
         <ImageView
             android:id="@+id/bad"
-            android:src="@drawable/bad"
-            android:layout_width="50dp"
-            android:layout_height="50dp"/>
+            android:layout_width="45dp"
+            android:layout_height="50dp"
+            android:src="@drawable/bad" />
+
         <ImageView
             android:id="@+id/angry"
-            android:src="@drawable/angry"
-            android:layout_width="50dp"
-            android:layout_height="50dp"/>
+            android:layout_width="45dp"
+            android:layout_height="50dp"
+            android:src="@drawable/angry" />
 
 
     </LinearLayout>
