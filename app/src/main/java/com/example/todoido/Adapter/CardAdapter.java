@@ -1,11 +1,15 @@
 package com.example.todoido.Adapter;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -72,9 +76,27 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
         holder.closeButton.setOnClickListener(v -> {
             int currentPosition = holder.getAdapterPosition();
             if (currentPosition != RecyclerView.NO_POSITION) {
-                removeItem(currentPosition, () -> viewPager.setCurrentItem(viewPager.getCurrentItem(), false));
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                LayoutInflater inflater = LayoutInflater.from(context);
+                View view = inflater.inflate(R.layout.dialog_layout, null);
+                builder.setView(view);
+
+                AlertDialog dialog = builder.create();
+                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+                Button removeButton = view.findViewById(R.id.removeButton);
+                removeButton.setOnClickListener(v1 -> {
+                    removeItem(currentPosition, () -> viewPager.setCurrentItem(viewPager.getCurrentItem(), false));
+                    dialog.dismiss();
+                });
+
+                Button cancelButton = view.findViewById(R.id.cancelButton);
+                cancelButton.setOnClickListener(v12 -> dialog.dismiss());
+
+                dialog.show();
             }
         });
+
 
         // 이미지가 설정되어 있는 경우 ImageView에 이미지 설정
         if (item.getImageUri() != null) {
