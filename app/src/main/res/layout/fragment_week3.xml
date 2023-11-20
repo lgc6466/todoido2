@@ -94,7 +94,6 @@
                 android:padding="3dp"
                 android:scrollbars="vertical" />
 
-
         </LinearLayout>
     </RelativeLayout>
 

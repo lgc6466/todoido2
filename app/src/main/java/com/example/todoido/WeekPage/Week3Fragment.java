@@ -74,28 +74,31 @@ public class Week3Fragment extends BaseWeekFragment {
 
         weekViewModel.getWeekDataList().observe(getViewLifecycleOwner(), weekDataList -> {
             for (WeekViewModel.WeekData weekData : weekDataList) {
-                if (weekData.getId().equals("week3")) {
+                if (weekData.getId().equals( "week3")) {
                     weekAdapter.setSelectedEmoji(weekData.getSelectedEmoji());
                     weekAdapter.setGoals(weekData.getGoals());
 
                     String selectedEmoji = weekData.getSelectedEmoji();
-                    switch (selectedEmoji) {
-                        case "happy":
-                            mainImageView.setImageResource(R.drawable.happy);
-                            break;
-                        case "smile":
-                            mainImageView.setImageResource(R.drawable.smile);
-                            break;
-                        case "soso":
-                            mainImageView.setImageResource(R.drawable.soso);
-                            break;
-                        case "bad":
-                            mainImageView.setImageResource(R.drawable.bad);
-                            break;
-                        case "angry":
-                            mainImageView.setImageResource(R.drawable.angry);
-                            break;
+                    if (selectedEmoji != null) {
+                        switch (selectedEmoji) {
+                            case "happy":
+                                mainImageView.setImageResource(R.drawable.happy);
+                                break;
+                            case "smile":
+                                mainImageView.setImageResource(R.drawable.smile);
+                                break;
+                            case "soso":
+                                mainImageView.setImageResource(R.drawable.soso);
+                                break;
+                            case "bad":
+                                mainImageView.setImageResource(R.drawable.bad);
+                                break;
+                            case "angry":
+                                mainImageView.setImageResource(R.drawable.angry);
+                                break;
+                        }
                     }
+
                 }
             }
         });

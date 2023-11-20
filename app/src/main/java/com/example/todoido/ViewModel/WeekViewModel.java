@@ -50,13 +50,25 @@ public class WeekViewModel extends ViewModel {
         });
     }
 
-
-
-
-
     public void updateSelectedEmoji(String weekID, String selectedEmoji) {
-        databaseRef.child(weekID).child("selectedEmoji").setValue(selectedEmoji);
+        databaseRef.child(weekID).child("goals").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                List<String> goals = (List<String>) dataSnapshot.getValue();
+
+                // 'goals' 필드에 아이템이 하나라도 있을 경우에만 이모지를 저장합니다.
+                if (goals != null && !goals.isEmpty()) {
+                    databaseRef.child(weekID).child("selectedEmoji").setValue(selectedEmoji);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // 취소된 경우에 대한 처리를 여기에 작성합니다.
+            }
+        });
     }
+
 
     public void updateGoals(String weekID, List<String> goals) {
         databaseRef.child(weekID).child("goals").setValue(goals);

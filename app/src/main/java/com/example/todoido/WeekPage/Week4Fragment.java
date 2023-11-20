@@ -40,7 +40,7 @@ public class Week4Fragment extends BaseWeekFragment {
         weekViewModel = new ViewModelProvider(requireActivity()).get(WeekViewModel.class);
 
         weekRecyclerView = view.findViewById(R.id.weekrecyclerView);
-        weekAdapter = new WeekAdapter(weekViewModel, "week4");
+        weekAdapter = new WeekAdapter(weekViewModel,"week4");
         weekRecyclerView.setAdapter(weekAdapter);
         weekRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
@@ -79,23 +79,26 @@ public class Week4Fragment extends BaseWeekFragment {
                     weekAdapter.setGoals(weekData.getGoals());
 
                     String selectedEmoji = weekData.getSelectedEmoji();
-                    switch (selectedEmoji) {
-                        case "happy":
-                            mainImageView.setImageResource(R.drawable.happy);
-                            break;
-                        case "smile":
-                            mainImageView.setImageResource(R.drawable.smile);
-                            break;
-                        case "soso":
-                            mainImageView.setImageResource(R.drawable.soso);
-                            break;
-                        case "bad":
-                            mainImageView.setImageResource(R.drawable.bad);
-                            break;
-                        case "angry":
-                            mainImageView.setImageResource(R.drawable.angry);
-                            break;
+                    if (selectedEmoji != null) {
+                        switch (selectedEmoji) {
+                            case "happy":
+                                mainImageView.setImageResource(R.drawable.happy);
+                                break;
+                            case "smile":
+                                mainImageView.setImageResource(R.drawable.smile);
+                                break;
+                            case "soso":
+                                mainImageView.setImageResource(R.drawable.soso);
+                                break;
+                            case "bad":
+                                mainImageView.setImageResource(R.drawable.bad);
+                                break;
+                            case "angry":
+                                mainImageView.setImageResource(R.drawable.angry);
+                                break;
+                        }
                     }
+
                 }
             }
         });
