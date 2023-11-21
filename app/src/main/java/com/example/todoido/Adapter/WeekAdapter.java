@@ -48,15 +48,15 @@ public class WeekAdapter extends RecyclerView.Adapter<WeekAdapter.ViewHolder> {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_DONE && event == null) {
                     String inputText = holder.weektxt.getText().toString();
-                    if (!inputText.isEmpty()) { // 입력된 텍스트가 빈 문자열이 아닐 때만 처리
-                        if (position == 0) { // 첫 번째 아이템인 경우
-                            items.add(inputText); // 두 번째 아이템으로 입력 이동
-                            holder.weektxt.setText(""); // 첫 번째 아이템 비우기
-                            notifyItemInserted(1); // 두 번째 아이템에 대한 알림
+                    if (!inputText.isEmpty()) {
+                        if (position == 0) {
+                            items.add(inputText);
+                            holder.weektxt.setText("");
+                            notifyItemInserted(1);
                         } else {
-                            items.set(position, inputText); // 그 외의 아이템인 경우 해당 위치에 입력 저장
-                            holder.weektxt.setText(""); // 현재 EditText 비우기
-                            notifyItemChanged(position); // 해당 위치에 대한 알림
+                            items.set(position, inputText);
+                            holder.weektxt.setText("");
+                            notifyItemChanged(position);
                         }
 
                         // Firebase에 아이템 추가를 반영합니다.
@@ -81,7 +81,7 @@ public class WeekAdapter extends RecyclerView.Adapter<WeekAdapter.ViewHolder> {
                     items.remove(position);
                     notifyItemRemoved(position);
 
-                    // position이 1보다 크거나 같을 때만 Firebase에 아이템 삭제를 반영합니다.
+
                     if (position >= 1) {
                         weekViewModel.updateGoals(weekID, new ArrayList<>(items));
                     }
