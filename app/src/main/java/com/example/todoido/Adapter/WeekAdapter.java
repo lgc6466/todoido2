@@ -48,38 +48,51 @@ public class WeekAdapter extends RecyclerView.Adapter<WeekAdapter.ViewHolder> {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_DONE && event == null) {
                     String inputText = holder.weektxt.getText().toString();
-                    if (!inputText.isEmpty()) { // 입력된 텍스트가 빈 문자열이 아닐 때만 아이템 추가
-                        items.add(inputText);
-                        notifyItemInserted(items.size() - 1);
-                        holder.weektxt.setText(""); // 현재 EditText를 빈 문자열로 설정
-                    }
+                    if (!inputText.isEmpty()) { // 입력된 텍스트가 빈 문자열이 아닐 때만 처리
+                        if (position == 0) { // 첫 번째 아이템인 경우
+                            items.add(inputText); // 두 번째 아이템으로 입력 이동
+                            holder.weektxt.setText(""); // 첫 번째 아이템 비우기
+                            notifyItemInserted(1); // 두 번째 아이템에 대한 알림
+                        } else {
+                            items.set(position, inputText); // 그 외의 아이템인 경우 해당 위치에 입력 저장
+                            holder.weektxt.setText(""); // 현재 EditText 비우기
+                            notifyItemChanged(position); // 해당 위치에 대한 알림
+                        }
 
-                    // Firebase에 아이템 추가를 반영합니다.
-                    weekViewModel.updateGoals(weekID, new ArrayList<>(items));
+                        // Firebase에 아이템 추가를 반영합니다.
+                        weekViewModel.updateGoals(weekID, new ArrayList<>(items));
+                    }
 
                     return true;
                 }
                 return false;
             }
         });
-
 
         holder.weektxt.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 int position = holder.getAdapterPosition();
-                if (keyCode == KeyEvent.KEYCODE_DEL && holder.weektxt.getText().toString().isEmpty() && items.size() > 1) {
+                if (position == RecyclerView.NO_POSITION) {
+                    // 뷰홀더의 위치를 찾을 수 없으면 아무 것도 하지 않습니다.
+                    return false;
+                }
+                if (keyCode == KeyEvent.KEYCODE_DEL && holder.weektxt.getText().toString().isEmpty() && items.size() > 1 && position != 0) {
                     items.remove(position);
                     notifyItemRemoved(position);
 
-                    // Firebase에 아이템 삭제를 반영합니다.
-                    weekViewModel.updateGoals(weekID, new ArrayList<>(items));
+                    // position이 1보다 크거나 같을 때만 Firebase에 아이템 삭제를 반영합니다.
+                    if (position >= 1) {
+                        weekViewModel.updateGoals(weekID, new ArrayList<>(items));
+                    }
 
                     return true;
                 }
                 return false;
             }
         });
+
+
     }
 
     @Override

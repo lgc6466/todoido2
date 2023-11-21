@@ -16,6 +16,9 @@
         android:id="@+id/weektxt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:hint="목표 입력 후 확인을 누르세요."
+        android:textColor="#5B4F3B"
+        android:textColorHint="#BF7C7C7C"
         android:inputType="text"
         android:imeOptions="actionDone"/>
 
