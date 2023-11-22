@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +23,7 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import com.bumptech.glide.Glide;
 import com.example.todoido.R;
+import com.example.todoido.ViewModel.MonthViewModel;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -30,13 +33,31 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
     private Context context;
     private ViewPager2 viewPager;
     private ActivityResultLauncher<Intent> mGetContent;
+    private MonthViewModel monthViewModel;
 
-    public CardAdapter(ArrayList<CardItem> items, Context context, ViewPager2 viewPager, ActivityResultLauncher<Intent> mGetContent) {
+    static class CardViewHolder extends RecyclerView.ViewHolder {
+        public TextWatcher textWatcher;
+        EditText contentEditText;
+        ImageButton closeButton;
+        ImageView monthPic;
+
+        CardViewHolder(View itemView) {
+            super(itemView);
+            contentEditText = itemView.findViewById(R.id.contentEditText);
+            closeButton = itemView.findViewById(R.id.closeButton);
+            monthPic = itemView.findViewById(R.id.monthpic);
+        }
+    }
+
+    public CardAdapter(ArrayList<CardItem> items, Context context, ViewPager2 viewPager, ActivityResultLauncher<Intent> mGetContent, MonthViewModel monthViewModel) {
         this.items = items;
         this.context = context;
         this.viewPager = viewPager;
         this.mGetContent = mGetContent;
+        this.monthViewModel = monthViewModel;
     }
+
+
 
     // 이미지를 설정할 메소드
     public void setImageUri(Uri uri, int position) {
@@ -67,12 +88,45 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
         return new CardViewHolder(view);
     }
 
-    @Override
     public void onBindViewHolder(@NonNull CardViewHolder holder, int position) {
+        // 이전에 설정한 TextWatcher 제거
+        if (holder.textWatcher != null) {
+            holder.contentEditText.removeTextChangedListener(holder.textWatcher);
+        }
+
         CardItem item = items.get(position);
         String content = item.getContent();
 
         holder.contentEditText.setText(content);
+
+        // TextWatcher 생성 및 설정
+        holder.textWatcher = new TextWatcher() {
+            private String previousText = "";
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                previousText = s.toString();
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (!s.toString().equals(previousText)) {
+                    // 텍스트 변경 후에 호출되는 메소드
+                    // 변경된 텍스트를 데이터베이스에 저장
+                    item.setContent(s.toString());
+                    monthViewModel.updateItem(item.getId(), item.getContent(), item.getViewType(), item.getImageUri());
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                // 텍스트 변경 후에 호출되는 메소드, 여기서는 아무 작업도 하지 않음
+            }
+        };
+
+        holder.contentEditText.addTextChangedListener(holder.textWatcher);
+
+        // 닫기 버튼 설정
         holder.closeButton.setOnClickListener(v -> {
             int currentPosition = holder.getAdapterPosition();
             if (currentPosition != RecyclerView.NO_POSITION) {
@@ -86,6 +140,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
 
                 Button removeButton = view.findViewById(R.id.removeButton);
                 removeButton.setOnClickListener(v1 -> {
+                    monthViewModel.updateItem(item.getId(), item.getContent(), item.getViewType(), item.getImageUri());
                     removeItem(currentPosition, () -> viewPager.setCurrentItem(viewPager.getCurrentItem(), false));
                     dialog.dismiss();
                 });
@@ -96,7 +151,6 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
                 dialog.show();
             }
         });
-
 
         // 이미지가 설정되어 있는 경우 ImageView에 이미지 설정
         if (item.getImageUri() != null) {
@@ -117,9 +171,8 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
                 Intent intent = new Intent(Intent.ACTION_PICK);
                 intent.setType("image/*");
 
-                // 클릭 리스너 안에서 현재 아이템의 위치를 기억
                 int currentPosition = holder.getAdapterPosition();
-                if (currentPosition != RecyclerView.NO_POSITION) {  // 위치가 유효한 경우에만 인텐트를 실행
+                if (currentPosition != RecyclerView.NO_POSITION) {
                     mGetContent.launch(intent);
                 }
             }
@@ -127,6 +180,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
     }
 
     public static class CardItem {
+        private String id;
         private String content;
         private int viewType;
         private Uri imageUri;
@@ -135,6 +189,14 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
             this.content = content;
             this.viewType = viewType;
             this.imageUri = null;
+        }
+
+        public String getId() {
+            return id;
+        }
+
+        public void setId(String id) {
+            this.id = id;
         }
 
         public String getContent() {
@@ -153,15 +215,24 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
         public void setImageUri(Uri imageUri) {
             this.imageUri = imageUri;
         }
+
+
+        public void setContent(String content) { // setContent 메소드 추가
+            this.content = content;
+        }
     }
 
     public void addItem(String content) {
         int viewType = new Random().nextInt(3);
-        items.add(new CardItem(content, viewType));
+        CardItem newItem = new CardItem(content, viewType);
+        String id = monthViewModel.addItem(newItem);
+        newItem.setId(id);
+        items.add(newItem);
         notifyItemInserted(items.size() - 1);
     }
 
     public void removeItem(int position, Runnable afterRemoval) {
+        CardItem item = items.get(position);
         items.remove(position);
         notifyItemRemoved(position);
         if (afterRemoval != null) {
@@ -171,19 +242,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
             viewPager.setCurrentItem(viewPager.getCurrentItem());
             viewPager.getAdapter().notifyDataSetChanged();
         });
-    }
-
-    static class CardViewHolder extends RecyclerView.ViewHolder {
-        EditText contentEditText;
-        ImageButton closeButton;
-        ImageView monthPic;
-
-        CardViewHolder(View itemView) {
-            super(itemView);
-            contentEditText = itemView.findViewById(R.id.contentEditText);
-            closeButton = itemView.findViewById(R.id.closeButton);
-            monthPic = itemView.findViewById(R.id.monthpic);
-        }
+        monthViewModel.removeItem(item.getId());
     }
 
     @Override
