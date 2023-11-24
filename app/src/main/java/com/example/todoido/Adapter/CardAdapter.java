@@ -103,6 +103,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
         holder.textWatcher = new TextWatcher() {
             private String previousText = "";
 
+
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
                 previousText = s.toString();
@@ -120,7 +121,14 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
 
             @Override
             public void afterTextChanged(Editable s) {
-                // 텍스트 변경 후에 호출되는 메소드, 여기서는 아무 작업도 하지 않음
+                // 텍스트 변경 후에 호출되는 메소드
+                String newText = s.toString();
+                if (!newText.equals(previousText)) {
+                    // 변경된 텍스트를 데이터베이스에 저장
+                    item.setContent(newText);
+                    monthViewModel.updateItem(item.getId(), item.getContent(), item.getViewType(), item.getImageUri());
+                    previousText = newText;
+                }
             }
         };
 

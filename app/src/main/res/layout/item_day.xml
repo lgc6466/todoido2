@@ -14,10 +14,10 @@
         android:id="@+id/timeEditText"
         android:layout_width="230dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="15dp"
         android:layout_marginLeft="35dp"
         android:gravity="left"
-        android:textSize="18dp"
+        android:textSize="20dp"
         android:background="@android:color/transparent"
         android:hint="시간" />
 
@@ -25,11 +25,11 @@
         android:id="@+id/contentEditText"
         android:layout_width="230dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="15dp"
         android:layout_marginLeft="35dp"
         android:layout_below="@id/timeEditText"
         android:gravity="left"
-        android:textSize="14dp"
+        android:textSize="16dp"
         android:background="@android:color/transparent"
         android:maxLines="2"
         android:hint="내용" />
@@ -38,8 +38,8 @@
         android:id="@+id/closeButton"
         android:layout_width="20dp"
         android:layout_height="20dp"
-        android:layout_marginTop="12dp"
-        android:layout_marginLeft="270dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginLeft="280dp"
         android:background="@drawable/close" />
 
 </RelativeLayout>
