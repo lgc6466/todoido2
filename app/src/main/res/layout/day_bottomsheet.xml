@@ -10,7 +10,7 @@
         android:layout_height="450dp"
         android:background="@drawable/rounder"
         app:behavior_hideable="false"
-
+        app:behavior_peekHeight="30dp"
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
         <LinearLayout
