@@ -35,6 +35,7 @@
             app:tabRippleColor="@color/white"
             app:tabMode="fixed"
             app:tabGravity="fill"
+            app:tabSelectedTextAppearance="@style/YourTextAppearance"
             app:tabTextColor="@color/not_selected_tab_text_color"
             app:tabSelectedTextColor="@color/selected_tab_text_color"
             app:tabIndicatorColor="@color/selected_tab_text_color"

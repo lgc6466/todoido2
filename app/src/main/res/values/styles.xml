@@ -10,5 +10,9 @@
         <item name="fontFamily">@font/nanumsquare_acb</item>
     </style>
 
+    <style name="YourTextAppearance" parent="TextAppearance.Design.Tab">
+        <item name="android:fontFamily">@font/nanumsquare_acb</item>
+    </style>
+
 
 </resources>
