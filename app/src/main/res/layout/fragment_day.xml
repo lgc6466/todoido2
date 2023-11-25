@@ -42,6 +42,7 @@
         </LinearLayout>
     </ScrollView>
     </RelativeLayout>
+    <include layout="@layout/day_bottomsheet" />
 </RelativeLayout>
 
 

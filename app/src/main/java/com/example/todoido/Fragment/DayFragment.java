@@ -1,54 +1,65 @@
 package com.example.todoido.Fragment;
 
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
-import android.widget.TextView;
 
-import com.example.todoido.Adapter.DayAdapter;
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+
 import com.example.todoido.R;
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
-import java.util.ArrayList;
 
 public class DayFragment extends Fragment {
-
-    ArrayList<String> items = new ArrayList<>();
-    DayAdapter adapter;
+    private BottomSheetBehavior bottomSheetBehavior;
+    private FrameLayout bottomSheet;
+    private boolean isSheetVisible = false;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_day, container, false);
 
-        // RecyclerView와 어댑터 초기화
-        RecyclerView recyclerView = view.findViewById(R.id.dayRecyclerView);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        adapter = new DayAdapter(items);
-        recyclerView.setAdapter(adapter);
+        bottomSheet = view.findViewById(R.id.sheet_day);
+        bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
 
-        // 이미지 버튼에 클릭 리스너 설정
         ImageButton addButton = view.findViewById(R.id.addButton);
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // 새 항목 추가
-                items.add("");
+                if (isSheetVisible) {
+                    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                    isSheetVisible = false;
+                } else {
+                    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                    isSheetVisible = true;
+                }
+            }
+        });
 
-                // 어댑터에 데이터가 변경되었음을 알림
-                adapter.notifyDataSetChanged();
+        bottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+            @Override
+            public void onStateChanged(@NonNull View bottomSheet, int newState) {
+                if (newState == BottomSheetBehavior.STATE_EXPANDED) {
+                    bottomSheet.setClickable(false);
+                    bottomSheet.setClipToOutline(false);
+                } else if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
+                    bottomSheet.setClickable(true);
+                    bottomSheet.setClipToOutline(true);
+                }
+            }
+
+            @Override
+            public void onSlide(@NonNull View bottomSheet, float slideOffset) {
+                // 슬라이드 중인 경우 추가적인 작업이 필요하다면 여기에 구현할 수 있습니다.
             }
         });
 
         return view;
     }
 }
+
 
