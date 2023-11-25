@@ -3,4 +3,12 @@
     <style name="SplashTheme" parent="Theme.AppCompat.NoActionBar">
         <item name="android:windowBackground">#F4E87A</item>
     </style>
+
+    <style name="CustomTimePickerTheme" parent="ThemeOverlay.MaterialComponents.TimePicker">
+        <item name="colorOnSurface">@color/selected_tab_text_color</item>
+        <item name="colorPrimary">@color/orange</item>
+        <item name="fontFamily">@font/nanumsquare_acb</item>
+    </style>
+
+
 </resources>

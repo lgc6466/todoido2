@@ -10,7 +10,8 @@
         android:background="@drawable/daybox"
         android:layout_marginBottom="15dp"/>
 
-    <EditText
+
+    <TextView
         android:id="@+id/timeEditText"
         android:layout_width="230dp"
         android:layout_height="wrap_content"

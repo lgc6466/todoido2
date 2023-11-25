@@ -3,11 +3,7 @@ package com.example.todoido;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.ColorStateList;
 import android.graphics.Color;
-import android.graphics.PorterDuff;
-import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.text.InputType;
 import android.text.TextUtils;
@@ -20,7 +16,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
-import androidx.core.view.ViewCompat;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -151,7 +146,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        checkbox.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.FF7A01));
+        checkbox.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.orange));
 
         sharedPreferences = getSharedPreferences("login", MODE_PRIVATE);
         editor = sharedPreferences.edit();

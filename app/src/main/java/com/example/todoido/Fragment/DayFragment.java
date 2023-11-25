@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 
@@ -12,7 +13,8 @@ import androidx.fragment.app.Fragment;
 
 import com.example.todoido.R;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
-
+import com.google.android.material.timepicker.MaterialTimePicker;
+import com.google.android.material.timepicker.TimeFormat;
 
 public class DayFragment extends Fragment {
     private BottomSheetBehavior bottomSheetBehavior;
@@ -40,6 +42,41 @@ public class DayFragment extends Fragment {
             }
         });
 
+        Button timePickerButton = view.findViewById(R.id.timePickerButton);
+        Button timePickerButton2 = view.findViewById(R.id.timePickerButton2);
+
+        View.OnClickListener timePickerClickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Button clickedButton = (Button) v;
+
+                MaterialTimePicker materialTimePicker = new MaterialTimePicker.Builder()
+                        .setTheme(R.style.CustomTimePickerTheme)
+                        .setTimeFormat(TimeFormat.CLOCK_24H)
+                        .setHour(00)
+                        .setMinute(00)
+                        .build();
+
+                materialTimePicker.show(getChildFragmentManager(), "TIME_PICKER");
+
+                materialTimePicker.addOnPositiveButtonClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        int hour = materialTimePicker.getHour();
+                        int minute = materialTimePicker.getMinute();
+                        clickedButton.setText(String.format("%02d:%02d", hour, minute));
+                        clickedButton.setTextColor(getResources().getColor(R.color.selected_tab_text_color));
+                    }
+                });
+            }
+        };
+
+        timePickerButton.setOnClickListener(timePickerClickListener);
+        timePickerButton2.setOnClickListener(timePickerClickListener);
+
+        timePickerButton.setOnClickListener(timePickerClickListener);
+        timePickerButton2.setOnClickListener(timePickerClickListener);
+
         bottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
             @Override
             public void onStateChanged(@NonNull View bottomSheet, int newState) {
@@ -61,5 +98,3 @@ public class DayFragment extends Fragment {
         return view;
     }
 }
-
-
