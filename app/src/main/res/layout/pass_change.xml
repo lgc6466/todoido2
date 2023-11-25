@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="300dp"
+    android:layout_width="350dp"
     android:layout_height="265dp"
     android:gravity="center"
     android:orientation="vertical">
 
     <ImageView
-        android:layout_width="300dp"
+        android:layout_width="350dp"
         android:layout_height="265dp"
         android:background="@drawable/passbox"
         android:scaleType="fitXY" />
@@ -26,7 +26,7 @@
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/pw_cardview"
-        android:layout_width="250dp"
+        android:layout_width="295dp"
         android:layout_height="40dp"
         android:layout_below="@+id/changeQ"
         android:layout_gravity="center"
@@ -52,10 +52,10 @@
 
             <EditText
                 android:id="@+id/et_pass"
-                android:layout_width="140dp"
+                android:layout_width="160dp"
                 android:layout_height="35dp"
                 android:layout_gravity="center"
-                android:layout_marginLeft="10dp"
+                android:layout_marginLeft="35dp"
                 android:background="@android:color/transparent"
                 android:inputType="textPassword"
                 android:textSize="12dp" />
@@ -76,7 +76,7 @@
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/pw_cardview3"
-        android:layout_width="250dp"
+        android:layout_width="295dp"
         android:layout_height="40dp"
         android:layout_below="@+id/pw_cardview2"
         android:layout_gravity="center"
@@ -102,7 +102,7 @@
 
             <EditText
                 android:id="@+id/confirm_pass"
-                android:layout_width="115dp"
+                android:layout_width="160dp"
                 android:layout_height="35dp"
                 android:layout_gravity="center"
                 android:layout_marginLeft="10dp"
@@ -125,7 +125,7 @@
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/pw_cardview2"
-        android:layout_width="250dp"
+        android:layout_width="295dp"
         android:layout_height="40dp"
         android:layout_below="@+id/pw_cardview"
         android:layout_gravity="center"
@@ -151,10 +151,10 @@
 
             <EditText
                 android:id="@+id/new_pass"
-                android:layout_width="125dp"
+                android:layout_width="160dp"
                 android:layout_height="35dp"
                 android:layout_gravity="center"
-                android:layout_marginLeft="10dp"
+                android:layout_marginLeft="20dp"
                 android:background="@android:color/transparent"
                 android:inputType="textPassword"
                 android:textSize="12dp" />

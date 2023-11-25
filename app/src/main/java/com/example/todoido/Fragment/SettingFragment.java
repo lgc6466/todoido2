@@ -9,6 +9,7 @@ import android.graphics.Paint;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.InputType;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,6 +33,8 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.tabs.TabLayout;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -144,11 +147,65 @@ public class SettingFragment extends Fragment {
                 EditText et_pass3 = dialog.findViewById(R.id.confirm_pass);
 
                 // 취소 버튼
-                Button cancelButton = dialog.findViewById(R.id.cancel_button);
-                cancelButton.setOnClickListener(new View.OnClickListener() {
+                Button dialogCancelButton = dialog.findViewById(R.id.cancelButton);
+                dialogCancelButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         dialog.dismiss();  // Dialog 닫기
+                    }
+                });
+
+                // 변경 버튼
+                Button changeButton = dialog.findViewById(R.id.changeButton);
+                changeButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        // 현재 비밀번호, 새로운 비밀번호, 비밀번호 확인
+                        String currentPassword = et_pass1.getText().toString();
+                        String newPassword = et_pass2.getText().toString();
+                        String confirmPassword = et_pass3.getText().toString();
+
+                        // Firebase 인증 객체
+                        FirebaseAuth auth = FirebaseAuth.getInstance();
+                        FirebaseUser user = auth.getCurrentUser();
+
+                        // 현재 비밀번호와 새로운 비밀번호가 비어있지 않은지 확인
+                        if (!TextUtils.isEmpty(currentPassword) && !TextUtils.isEmpty(newPassword)) {
+                            // 새로운 비밀번호와 현재 비밀번호가 동일한지 확인
+                            if(currentPassword.equals(newPassword)) {
+                                Toast.makeText(getContext(), "새 비밀번호가 현재 비밀번호와 같습니다.", Toast.LENGTH_SHORT).show();
+                            }
+                            // 새로운 비밀번호와 비밀번호 확인이 일치하는지 확인
+                            else if (newPassword.equals(confirmPassword)) {
+                                // 사용자 재인증 (이메일과 현재 비밀번호를 사용)
+                                AuthCredential credential = EmailAuthProvider.getCredential(user.getEmail(), currentPassword);
+                                user.reauthenticate(credential).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if (task.isSuccessful()) {
+                                            // 비밀번호 변경
+                                            user.updatePassword(newPassword).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<Void> task) {
+                                                    if (task.isSuccessful()) {
+                                                        Toast.makeText(getContext(), "비밀번호가 성공적으로 변경되었습니다.", Toast.LENGTH_SHORT).show();
+                                                        dialog.dismiss();  // Dialog 닫기
+                                                    } else {
+                                                        Toast.makeText(getContext(), "비밀번호 변경에 실패했습니다.", Toast.LENGTH_SHORT).show();
+                                                    }
+                                                }
+                                            });
+                                        } else {
+                                            Toast.makeText(getContext(), "현재 비밀번호가 일치하지 않습니다.", Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+                                });
+                            } else {
+                                Toast.makeText(getContext(), "비밀번호 확인이 일치하지 않습니다.", Toast.LENGTH_SHORT).show();
+                            }
+                        } else {
+                            Toast.makeText(getContext(), "비밀번호를 입력해주세요.", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 });
 
