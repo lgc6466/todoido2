@@ -14,31 +14,35 @@
             android:id="@+id/happy"
             android:layout_width="45dp"
             android:layout_height="50dp"
-            android:layout_marginLeft="10dp"
+            android:layout_marginLeft="3dp"
             android:src="@drawable/happy" />
 
         <ImageView
             android:id="@+id/smile"
             android:layout_width="45dp"
             android:layout_height="50dp"
+            android:layout_marginLeft="3dp"
             android:src="@drawable/smile" />
 
         <ImageView
             android:id="@+id/soso"
             android:layout_width="45dp"
             android:layout_height="50dp"
+            android:layout_marginLeft="3dp"
             android:src="@drawable/soso" />
 
         <ImageView
             android:id="@+id/bad"
             android:layout_width="45dp"
             android:layout_height="50dp"
+            android:layout_marginLeft="3dp"
             android:src="@drawable/bad" />
 
         <ImageView
             android:id="@+id/angry"
             android:layout_width="45dp"
             android:layout_height="50dp"
+            android:layout_marginLeft="3dp"
             android:src="@drawable/angry" />
 
 
