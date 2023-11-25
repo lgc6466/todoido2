@@ -11,6 +11,7 @@
         app:cardCornerRadius="20dp"
         app:strokeColor="@color/yellow_border"
         app:strokeWidth="1dp"
+        android:background="@color/white"
         android:clickable="true"
         android:focusable="true"
         android:checkable="true">
