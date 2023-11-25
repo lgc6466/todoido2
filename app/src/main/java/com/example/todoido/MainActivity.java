@@ -1,18 +1,15 @@
 package com.example.todoido;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.viewpager.widget.ViewPager;
 
 import android.annotation.SuppressLint;
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import com.example.todoido.Fragment.DayFragment;
 import com.example.todoido.Fragment.MonthFragment;
+import com.example.todoido.Fragment.SettingFragment;
 import com.example.todoido.Fragment.WeekFragment;
 import com.example.todoido.Fragment.YearFragment;
-import com.google.android.material.navigation.NavigationBarView;
 import com.google.android.material.tabs.TabLayout;
 
 public class MainActivity extends AppCompatActivity {
@@ -21,7 +18,7 @@ public class MainActivity extends AppCompatActivity {
     MonthFragment monthFragment;
     WeekFragment weekFragment;
     YearFragment yearFragment;
-
+    int prevSelectedTab = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +42,10 @@ public class MainActivity extends AppCompatActivity {
         tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
+                if (tab.getPosition() != 4) {
+                    prevSelectedTab = tab.getPosition();
+                }
+
                 switch (tab.getPosition()) {
                     case 0:
                         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, dayFragment).commit();
@@ -58,6 +59,10 @@ public class MainActivity extends AppCompatActivity {
                     case 3:
                         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, yearFragment).commit();
                         break;
+                    case 4:
+                        SettingFragment settingFragment = new SettingFragment(tabLayout, prevSelectedTab);
+                        getSupportFragmentManager().beginTransaction().replace(R.id.root_view_id, settingFragment).commit();
+                        break;
                 }
             }
 
@@ -67,9 +72,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onTabReselected(TabLayout.Tab tab) {}
         });
+
     }
-
-
-
-
 }
