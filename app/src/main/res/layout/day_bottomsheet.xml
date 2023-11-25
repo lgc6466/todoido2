@@ -10,7 +10,6 @@
         android:layout_height="450dp"
         android:background="@drawable/rounder"
         app:behavior_hideable="false"
-        app:behavior_peekHeight="30dp"
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
         <LinearLayout
@@ -82,6 +81,11 @@
                 app:cardElevation="4dp"
                 app:strokeColor="@color/yellow_border"
                 app:strokeWidth="1dp">
+                <EditText
+                    android:layout_width="300dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:inputType="text"/>
 
             </com.google.android.material.card.MaterialCardView>
 
