@@ -236,7 +236,9 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
         String id = monthViewModel.addItem(newItem);
         newItem.setId(id);
         items.add(newItem);
-        notifyItemInserted(items.size() - 1);
+        int newPosition = items.size() - 1;
+        notifyItemInserted(newPosition);
+        viewPager.setCurrentItem(newPosition, true);
     }
 
     public void removeItem(int position, Runnable afterRemoval) {
