@@ -10,7 +10,7 @@
         android:layout_height="450dp"
         android:background="@drawable/rounder"
         app:behavior_hideable="false"
-        app:behavior_peekHeight="30dp"
+
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
         <LinearLayout
@@ -46,7 +46,9 @@
                     android:id="@+id/timePickerButton"
                     android:layout_width="130dp"
                     android:layout_height="50dp"
-                    android:drawableStart="@drawable/clock_ic"
+                    app:icon="@drawable/clock_ic"
+                    app:iconGravity="textStart"
+                    app:iconTint="@color/gray_"
                     android:text="시작 시간"
                     android:fontFamily="@font/nanumsquare_acb"
                     android:textColor="@color/gray_"
@@ -65,7 +67,9 @@
                     android:layout_width="130dp"
                     android:layout_height="50dp"
                     android:layout_gravity="end"
-                    android:drawableStart="@drawable/clock_ic"
+                    app:icon="@drawable/clock_ic"
+                    app:iconGravity="textStart"
+                    app:iconTint="@color/gray_"
                     android:fontFamily="@font/nanumsquare_acb"
                     android:text="종료 시간"
                     android:textColor="@color/gray_"

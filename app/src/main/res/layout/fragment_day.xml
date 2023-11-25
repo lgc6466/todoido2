@@ -31,14 +31,17 @@
                 android:layout_marginTop="40dp"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
-            <ImageButton
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/addButton"
-                android:layout_width="50dp"
+                android:layout_width="90dp"
                 android:layout_height="50dp"
                 android:layout_gravity="center"
-                android:layout_marginTop="5dp"
-                android:layout_marginBottom="20dp"
-                android:background="@drawable/dayplus" />
+                android:fontFamily="@font/nanumsquare_acb"
+                android:text="추가하기"
+                android:textColor="@color/selected_tab_text_color"
+                app:cornerRadius="20dp"
+                app:elevation="4dp" />
+
         </LinearLayout>
     </ScrollView>
     </RelativeLayout>

@@ -10,7 +10,6 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.FrameLayout;
-import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -25,6 +24,7 @@ import com.example.todoido.R;
 import com.example.todoido.ViewModel.DayTask;
 import com.example.todoido.ViewModel.DayViewModel;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.timepicker.MaterialTimePicker;
 import com.google.android.material.timepicker.TimeFormat;
 import com.google.firebase.auth.FirebaseAuth;
@@ -61,23 +61,32 @@ public class DayFragment extends Fragment {
         spinnerAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_dropdown_item, items);
         spinner.setAdapter(spinnerAdapter);
 
-        ImageButton addButton = view.findViewById(R.id.addButton);
+        Button timePickerButton = view.findViewById(R.id.timePickerButton);
+        Button timePickerButton2 = view.findViewById(R.id.timePickerButton2);
+        MaterialButton addButton = view.findViewById(R.id.addButton);
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (isSheetVisible) {
                     bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                     isSheetVisible = false;
+                    selectedTaskPosition = -1;  // BottomSheet가 닫힐 때마다 selectedTaskPosition 초기화
                 } else {
                     bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
                     isSheetVisible = true;
 
-
+                    // 아이템 선택이 아닌 addButton을 통해 BottomSheet를 열 경우, 기존 내용 초기화
+                    if (selectedTaskPosition == -1) {
+                        timePickerButton.setText("시작 시간");
+                        timePickerButton2.setText("종료 시간");
+                        day_txt.setText("");
+                        spinner.setSelection(0);
+                        smartNotification.setChecked(false);
+                    }
 
                     spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                         @Override
                         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
                             String selectedItem = parent.getItemAtPosition(position).toString();
                             Toast.makeText(getActivity(), selectedItem + " 선택됨", Toast.LENGTH_SHORT).show();
                         }
@@ -90,8 +99,6 @@ public class DayFragment extends Fragment {
             }
         });
 
-        Button timePickerButton = view.findViewById(R.id.timePickerButton);
-        Button timePickerButton2 = view.findViewById(R.id.timePickerButton2);
 
         View.OnClickListener timePickerClickListener = new View.OnClickListener() {
             @Override
