@@ -84,7 +84,7 @@
                 android:layout_height="50dp"
                 android:layout_gravity="center"
                 android:elevation="4dp"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="15dp"
                 app:cardCornerRadius="20dp"
                 app:cardElevation="4dp"
                 app:strokeColor="@color/yellow_border"
@@ -111,7 +111,7 @@
                 android:textAlignment="center"
                 android:textSize="17dp"
                 android:padding="5dp"
-                android:layout_marginTop="15dp"
+                android:layout_marginTop="25dp"
                 android:textColor="@color/selected_tab_text_color"
                 android:fontFamily="@font/nanumsquare_acb"/>
 
@@ -130,6 +130,7 @@
                 android:layout_gravity="center">
                 
                 <CheckBox
+                    android:id="@+id/smart_notification"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:buttonTint="@color/orange"/>
