@@ -16,8 +16,14 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.todoido.Adapter.DayTaskAdapter;
 import com.example.todoido.R;
+import com.example.todoido.ViewModel.DayTask;
+import com.example.todoido.ViewModel.DayViewModel;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.timepicker.MaterialTimePicker;
 import com.google.android.material.timepicker.TimeFormat;
@@ -25,6 +31,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.ArrayList;
 
 public class DayFragment extends Fragment {
     private BottomSheetBehavior bottomSheetBehavior;
@@ -35,17 +43,23 @@ public class DayFragment extends Fragment {
 
     FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
     private final DatabaseReference databaseRef = firebaseUser != null ? FirebaseDatabase.getInstance().getReference("Users").child(firebaseUser.getUid()).child("day") : null;
-
+    private int selectedTaskPosition = -1;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_day, container, false);
 
         bottomSheet = view.findViewById(R.id.sheet_day);
         bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
-        EditText day_txt = view.findViewById(R.id.day_txt); // day_txt라는 id를 가진 EditText 참조를 가져옵니다.
-        CheckBox smartNotification = view.findViewById(R.id.smart_notification); // smart_notification이라는 id를 가진 CheckBox 참조를 가져옵니다.
+        EditText day_txt = view.findViewById(R.id.day_txt);
+        CheckBox smartNotification = view.findViewById(R.id.smart_notification);
 
         spinner = view.findViewById(R.id.spinner);
+
+        String[] items = new String[]{"선택 안 함", "5분 전", "10분 전", "30분 전", "1시간 전", "3시간 전"};
+
+        ArrayAdapter<String> spinnerAdapter;
+        spinnerAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_dropdown_item, items);
+        spinner.setAdapter(spinnerAdapter);
 
         ImageButton addButton = view.findViewById(R.id.addButton);
         addButton.setOnClickListener(new View.OnClickListener() {
@@ -58,10 +72,7 @@ public class DayFragment extends Fragment {
                     bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
                     isSheetVisible = true;
 
-                    String[] items = new String[]{"선택 안 함", "5분 전", "10분 전", "30분 전", "1시간 전", "3시간 전"};
 
-                    ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_dropdown_item, items);
-                    spinner.setAdapter(adapter);
 
                     spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                         @Override
@@ -111,30 +122,63 @@ public class DayFragment extends Fragment {
         timePickerButton.setOnClickListener(timePickerClickListener);
         timePickerButton2.setOnClickListener(timePickerClickListener);
 
+        DayViewModel dayViewModel = new ViewModelProvider(requireActivity()).get(DayViewModel.class);
+        RecyclerView recyclerView = view.findViewById(R.id.dayRecyclerView);
+        DayTaskAdapter adapter = new DayTaskAdapter(new ArrayList<>(), null);
+        adapter.setOnItemClickListener(new DayTaskAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(DayTask task) {
+                // 항목 클릭 이벤트를 처리합니다.
+                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                isSheetVisible = true;
+                timePickerButton.setText(task.getStartTime());
+                timePickerButton2.setText(task.getEndTime());
+                day_txt.setText(task.getText());
+                spinner.setSelection(((ArrayAdapter<String>)spinner.getAdapter()).getPosition(task.getSpinnerSelection()));
+                smartNotification.setChecked(task.isChecked());
+                selectedTaskPosition = adapter.getTaskList().indexOf(task);
+            }
+        });
+
+        recyclerView.setAdapter(adapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        dayViewModel.getTaskList().observe(getViewLifecycleOwner(), tasks -> {
+            adapter.setTaskList(tasks);
+            adapter.notifyDataSetChanged();
+        });
+
         Button submitButton = view.findViewById(R.id.submit_btn);
         submitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 String startTime = timePickerButton.getText().toString();
                 String endTime = timePickerButton2.getText().toString();
                 String text = day_txt.getText().toString();
                 String spinnerSelection = spinner.getSelectedItem().toString();
                 boolean isChecked = smartNotification.isChecked();
 
+                DayTask task = new DayTask(startTime, endTime, text, spinnerSelection, isChecked);
 
-                DatabaseReference newChildRef = databaseRef.push();
-                newChildRef.child("startTime").setValue(startTime);
-                newChildRef.child("endTime").setValue(endTime);
-                newChildRef.child("text").setValue(text);
-                newChildRef.child("spinnerSelection").setValue(spinnerSelection);
-                newChildRef.child("isChecked").setValue(isChecked);
+                if (selectedTaskPosition != -1) {
+                    task.setId(adapter.getTaskList().get(selectedTaskPosition).getId());
+                    dayViewModel.updateTask(task);
 
-                // BottomSheet를 내립니다.
+                    selectedTaskPosition = -1;
+                } else {
+                    dayViewModel.addTask(task);
+                }
                 bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                 isSheetVisible = false;
+
+                timePickerButton.setText("00:00");
+                timePickerButton2.setText("00:00");
+                day_txt.setText("");
+                spinner.setSelection(0);
+                smartNotification.setChecked(false);
             }
         });
+
 
         bottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
             @Override
