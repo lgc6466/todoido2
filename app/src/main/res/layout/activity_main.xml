@@ -32,6 +32,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/toplogo"
             android:foregroundTint="@color/black"
+            app:tabRippleColor="@color/white"
             app:tabMode="fixed"
             app:tabGravity="fill"
             app:tabTextColor="@color/not_selected_tab_text_color"
