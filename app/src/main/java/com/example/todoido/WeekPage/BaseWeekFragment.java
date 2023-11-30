@@ -2,6 +2,8 @@ package com.example.todoido.WeekPage;
 
 import android.app.Dialog;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -9,9 +11,6 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import android.view.View;
-import android.widget.ImageView;
 
 import com.example.todoido.Adapter.WeekAdapter;
 import com.example.todoido.R;
@@ -56,7 +55,7 @@ public abstract class BaseWeekFragment extends Fragment {
         happyIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mainImageView.setImageResource(R.drawable.happy);
+                mainImageView.setImageResource(R.drawable.happy2);
                 adapter.setSelectedEmoji("happy");  // 선택한 이모지를 WeekAdapter에 전달하고 Firebase에 저장
                 dialog.dismiss();
             }

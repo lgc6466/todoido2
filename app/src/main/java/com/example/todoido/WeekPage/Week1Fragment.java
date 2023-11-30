@@ -80,7 +80,7 @@ public class Week1Fragment extends BaseWeekFragment {
                     if (selectedEmoji != null) {
                         switch (selectedEmoji) {
                             case "happy":
-                                mainImageView.setImageResource(R.drawable.happy);
+                                mainImageView.setImageResource(R.drawable.happy2);
                                 break;
                             case "smile":
                                 mainImageView.setImageResource(R.drawable.smile);
