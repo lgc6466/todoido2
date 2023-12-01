@@ -38,7 +38,7 @@
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/id_cardview"
-            android:layout_width="300dp"
+            android:layout_width="280dp"
             android:layout_height="50dp"
             android:layout_gravity="center"
             app:cardBackgroundColor="#FFFFFF"
@@ -74,7 +74,7 @@
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/pw_cardview"
-            android:layout_width="300dp"
+            android:layout_width="280dp"
             android:layout_height="50dp"
             android:layout_gravity="center"
             android:layout_marginTop="15dp"
@@ -98,7 +98,7 @@
 
                 <EditText
                     android:id="@+id/et_pass"
-                    android:layout_width="180dp"
+                    android:layout_width="170dp"
                     android:layout_height="35dp"
                     android:layout_marginLeft="10dp"
                     android:layout_gravity="center"
@@ -161,7 +161,7 @@
 
         <Button
             android:id="@+id/btn_login"
-            android:layout_width="300dp"
+            android:layout_width="280dp"
             android:layout_height="53dp"
             android:layout_gravity="center"
             android:layout_marginTop="10dp"
@@ -195,7 +195,7 @@
 
         <Button
             android:id="@+id/btn_register"
-            android:layout_width="300dp"
+            android:layout_width="280dp"
             android:layout_height="53dp"
             android:layout_gravity="center"
             android:layout_marginTop="10dp"

@@ -11,8 +11,9 @@
 
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="360dp"
         android:layout_height="match_parent"
+        android:layout_gravity="center|top"
         android:layout_marginTop="50dp"
         android:orientation="vertical">
 
@@ -27,8 +28,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginLeft="40dp"
-
+            android:layout_marginLeft="30dp"
+            android:layout_gravity="center"
             android:layout_marginRight="30dp"
             android:layout_marginBottom="30dp"
             android:orientation="vertical">
@@ -47,7 +48,7 @@
 
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/name_cardview"
-                android:layout_width="300dp"
+                android:layout_width="280dp"
                 android:layout_height="50dp"
                 android:layout_gravity="center"
                 app:cardBackgroundColor="#FFFFFF"
@@ -83,7 +84,7 @@
 
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/id_cardview"
-                android:layout_width="300dp"
+                android:layout_width="280dp"
                 android:layout_height="50dp"
                 android:layout_marginTop="15dp"
                 android:layout_gravity="center"
@@ -120,7 +121,7 @@
 
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/pw_cardview"
-                android:layout_width="300dp"
+                android:layout_width="280dp"
                 android:layout_height="50dp"
                 android:layout_gravity="center"
                 android:layout_marginTop="15dp"
@@ -145,7 +146,7 @@
 
                     <EditText
                         android:id="@+id/et_pass"
-                        android:layout_width="185dp"
+                        android:layout_width="170dp"
                         android:layout_height="35dp"
                         android:hint="영문, 숫자, 특수문자 포함 6자 이상"
                         android:layout_marginLeft="10dp"
@@ -172,7 +173,7 @@
 
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/pw2_cardview"
-                android:layout_width="300dp"
+                android:layout_width="280dp"
                 android:layout_height="50dp"
                 android:layout_gravity="center"
                 android:layout_marginTop="15dp"
@@ -197,7 +198,7 @@
 
                     <EditText
                         android:id="@+id/et_pass2"
-                        android:layout_width="157dp"
+                        android:layout_width="140dp"
                         android:layout_height="35dp"
                         android:hint="비밀번호를 재입력하세요"
                         android:layout_marginLeft="10dp"
@@ -224,7 +225,7 @@
 
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/em_cardview"
-                android:layout_width="300dp"
+                android:layout_width="280dp"
                 android:layout_height="50dp"
                 android:layout_gravity="center"
                 android:layout_marginTop="15dp"
