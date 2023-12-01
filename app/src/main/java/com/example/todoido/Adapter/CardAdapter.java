@@ -24,6 +24,11 @@ import androidx.viewpager2.widget.ViewPager2;
 import com.bumptech.glide.Glide;
 import com.example.todoido.R;
 import com.example.todoido.ViewModel.MonthViewModel;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -40,12 +45,36 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
         EditText contentEditText;
         ImageButton closeButton;
         ImageView monthPic;
+        CardItem item;
 
         CardViewHolder(View itemView) {
             super(itemView);
             contentEditText = itemView.findViewById(R.id.contentEditText);
             closeButton = itemView.findViewById(R.id.closeButton);
             monthPic = itemView.findViewById(R.id.monthpic);
+
+            // TextWatcher 생성
+            textWatcher = new TextWatcher() {
+                private String previousText = "";
+
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                    previousText = s.toString();
+                }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+                @Override
+                public void afterTextChanged(Editable s) {
+                    String newText = s.toString();
+                    if (!newText.equals(previousText)) {
+                        // 변경된 텍스트를 데이터베이스에 저장
+                        item.setContent(newText);
+                        previousText = newText;
+                    }
+                }
+            };
         }
     }
 
@@ -57,14 +86,40 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
         this.monthViewModel = monthViewModel;
     }
 
-
-
     // 이미지를 설정할 메소드
     public void setImageUri(Uri uri, int position) {
         CardItem item = items.get(position);
         if (item.getImageUri() == null) {  // 이미지가 설정되어 있지 않은 경우에만 이미지 설정
-            item.setImageUri(uri);
-            notifyItemChanged(position);
+
+            // Firebase Storage 참조 가져오기
+            StorageReference storageRef = FirebaseStorage.getInstance().getReference();
+
+            // 이미지 Uri에서 파일 이름 가져오기
+            String filename = uri.getLastPathSegment();
+            // 업로드할 파일의 Storage 참조 만들기
+            StorageReference fileRef = storageRef.child("images/" + filename);
+
+            // 이미지 업로드
+            UploadTask uploadTask = fileRef.putFile(uri);
+            uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    // 업로드 성공 후, 이미지 URL 가져오기
+                    fileRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri downloadUri) {
+                            // 데이터베이스에 이미지 URL 저장
+                            item.setImageUri(downloadUri);
+                            notifyItemChanged(position);
+                        }
+                    });
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception exception) {
+                    // 업로드 실패
+                }
+            });
         }
     }
 
@@ -90,73 +145,40 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
 
     public void onBindViewHolder(@NonNull CardViewHolder holder, int position) {
         // 이전에 설정한 TextWatcher 제거
-        if (holder.textWatcher != null) {
-            holder.contentEditText.removeTextChangedListener(holder.textWatcher);
-        }
+        holder.contentEditText.removeTextChangedListener(holder.textWatcher);
 
         CardItem item = items.get(position);
+        holder.item = item;
         String content = item.getContent();
 
         holder.contentEditText.setText(content);
 
-        // TextWatcher 생성 및 설정
-        holder.textWatcher = new TextWatcher() {
-            private String previousText = "";
+        // 클릭 리스너를 통해 포커스 요청
+        holder.contentEditText.setOnClickListener(v -> holder.contentEditText.requestFocus());
 
+        // TextWatcher 설정
+        holder.textWatcher.afterTextChanged(new Editable.Factory().newEditable(content));
+        holder.contentEditText.addTextChangedListener(holder.textWatcher);
 
+        holder.contentEditText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                previousText = s.toString();
+
             }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (!s.toString().equals(previousText)) {
-                    // 텍스트 변경 후에 호출되는 메소드
-                    // 변경된 텍스트를 데이터베이스에 저장
-                    item.setContent(s.toString());
-                    monthViewModel.updateItem(item.getId(), item.getContent(), item.getViewType(), item.getImageUri());
-                }
+
             }
 
             @Override
             public void afterTextChanged(Editable s) {
-                // 텍스트 변경 후에 호출되는 메소드
                 String newText = s.toString();
-                if (!newText.equals(previousText)) {
+                if (!newText.equals(content)) {
                     // 변경된 텍스트를 데이터베이스에 저장
                     item.setContent(newText);
                     monthViewModel.updateItem(item.getId(), item.getContent(), item.getViewType(), item.getImageUri());
-                    previousText = newText;
                 }
-            }
-        };
-
-        holder.contentEditText.addTextChangedListener(holder.textWatcher);
-
-        // 닫기 버튼 설정
-        holder.closeButton.setOnClickListener(v -> {
-            int currentPosition = holder.getAdapterPosition();
-            if (currentPosition != RecyclerView.NO_POSITION) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                LayoutInflater inflater = LayoutInflater.from(context);
-                View view = inflater.inflate(R.layout.dialog_layout, null);
-                builder.setView(view);
-
-                AlertDialog dialog = builder.create();
-                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-
-                Button removeButton = view.findViewById(R.id.removeButton);
-                removeButton.setOnClickListener(v1 -> {
-                    monthViewModel.updateItem(item.getId(), item.getContent(), item.getViewType(), item.getImageUri());
-                    removeItem(currentPosition, () -> viewPager.setCurrentItem(viewPager.getCurrentItem(), false));
-                    dialog.dismiss();
-                });
-
-                Button cancelButton = view.findViewById(R.id.cancelButton);
-                cancelButton.setOnClickListener(v12 -> dialog.dismiss());
-
-                dialog.show();
             }
         });
 
