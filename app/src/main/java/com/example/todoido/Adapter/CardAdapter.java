@@ -1,5 +1,7 @@
 package com.example.todoido.Adapter;
 
+import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -8,15 +10,21 @@ import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.TextView;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
@@ -26,6 +34,11 @@ import com.example.todoido.R;
 import com.example.todoido.ViewModel.MonthViewModel;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -109,8 +122,26 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
                         @Override
                         public void onSuccess(Uri downloadUri) {
                             // 데이터베이스에 이미지 URL 저장
-                            item.setImageUri(downloadUri);
+                            item.setImageUri(downloadUri); // 수정: downloadUri로 설정
                             notifyItemChanged(position);
+
+                            // Firebase 실시간 데이터베이스 참조 가져오기
+                            DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference();
+
+                            // 데이터베이스에 이미지 URL 저장
+                            dbRef.child("images").child(filename).setValue(downloadUri.toString())
+                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void unused) {
+                                            // 데이터베이스 저장 성공
+                                        }
+                                    })
+                                    .addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            // 데이터베이스 저장 실패
+                                        }
+                                    });
                         }
                     });
                 }
@@ -143,7 +174,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
         return new CardViewHolder(view);
     }
 
-    public void onBindViewHolder(@NonNull CardViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull CardViewHolder holder, @SuppressLint("RecyclerView") int position) {
         // 이전에 설정한 TextWatcher 제거
         holder.contentEditText.removeTextChangedListener(holder.textWatcher);
 
@@ -175,12 +206,48 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
             public void afterTextChanged(Editable s) {
                 String newText = s.toString();
                 if (!newText.equals(content)) {
-                    // 변경된 텍스트를 데이터베이스에 저장
+                    // 변경된 텍스트를 CardItem에 저장
                     item.setContent(newText);
+                }
+            }
+        });
+
+        holder.contentEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!hasFocus) {
+                    // 포커스를 잃었을 때 데이터베이스에 저장
                     monthViewModel.updateItem(item.getId(), item.getContent(), item.getViewType(), item.getImageUri());
                 }
             }
         });
+
+        // 닫기 버튼 설정
+        holder.closeButton.setOnClickListener(v -> {
+            int currentPosition = holder.getAdapterPosition();
+            if (currentPosition != RecyclerView.NO_POSITION) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                LayoutInflater inflater = LayoutInflater.from(context);
+                View view = inflater.inflate(R.layout.dialog_layout, null);
+                builder.setView(view);
+
+                AlertDialog dialog = builder.create();
+                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+                Button removeButton = view.findViewById(R.id.removeButton);
+                removeButton.setOnClickListener(v1 -> {
+                    monthViewModel.updateItem(item.getId(), item.getContent(), item.getViewType(), item.getImageUri());
+                    removeItem(currentPosition, () -> viewPager.setCurrentItem(viewPager.getCurrentItem(), false));
+                    dialog.dismiss();
+                });
+
+                Button cancelButton = view.findViewById(R.id.cancelButton);
+                cancelButton.setOnClickListener(v12 -> dialog.dismiss());
+
+                dialog.show();
+            }
+        });
+
 
         // 이미지가 설정되어 있는 경우 ImageView에 이미지 설정
         if (item.getImageUri() != null) {
@@ -189,11 +256,32 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
                     .centerCrop()
                     .into(holder.monthPic);
         } else {
-            // 이미지가 설정되어 있지 않은 경우 ImageView를 초기화
-            holder.monthPic.setImageDrawable(null);
+            // Firebase 실시간 데이터베이스 참조 가져오기
+            DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference();
+
+            // 데이터베이스에서 이미지 URL 불러오기
+            dbRef.child("images").child("filename") // "filename" 부분은 실제 파일 이름으로 변경해야 합니다.
+                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            String imageUrl = dataSnapshot.getValue(String.class);
+                            if (imageUrl != null) {
+                                // 불러온 이미지 URL로 ImageView 설정
+                                Glide.with(holder.monthPic.getContext())
+                                        .load(imageUrl)
+                                        .centerCrop()
+                                        .into(holder.monthPic);
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                            // 데이터 불러오기 실패
+                        }
+                    });
         }
 
-        // gallerybtn 찾기와 클릭 리스너 설정
+        // gallerybtn 클릭 리스너 설정
         ImageButton galleryBtn = holder.itemView.findViewById(R.id.gallerybtn);
         galleryBtn.setOnClickListener(new View.OnClickListener() {
             @Override
