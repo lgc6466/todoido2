@@ -260,7 +260,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
             DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference();
 
             // 데이터베이스에서 이미지 URL 불러오기
-            dbRef.child("images").child("filename") // "filename" 부분은 실제 파일 이름으로 변경해야 합니다.
+            dbRef.child("images").child(item.getId())
                     .addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -271,6 +271,9 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
                                         .load(imageUrl)
                                         .centerCrop()
                                         .into(holder.monthPic);
+                            } else {
+                                // 이미지가 없는 경우 기본 이미지 설정
+                                holder.monthPic.setImageDrawable(null);
                             }
                         }
 
@@ -280,6 +283,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
                         }
                     });
         }
+
 
         // gallerybtn 클릭 리스너 설정
         ImageButton galleryBtn = holder.itemView.findViewById(R.id.gallerybtn);
