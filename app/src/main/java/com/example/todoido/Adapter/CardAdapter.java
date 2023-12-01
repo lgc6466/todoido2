@@ -129,7 +129,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
                             DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference();
 
                             // 데이터베이스에 이미지 URL 저장
-                            dbRef.child("images").child(filename).setValue(downloadUri.toString())
+                            dbRef.child("images").child(item.getId()).setValue(downloadUri.toString())
                                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                                         @Override
                                         public void onSuccess(Void unused) {
