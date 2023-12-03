@@ -18,12 +18,13 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
             <!--app:behavior_peekHeight="30dp"-->
+
             <ImageView
                 android:layout_width="60dp"
                 android:layout_height="25dp"
                 android:layout_gravity="center|top"
                 android:scaleType="centerCrop"
-                android:src="@drawable/baseline_remove_24"></ImageView>
+                android:src="@drawable/baseline_remove_24"/>
 
             <TextView
                 android:layout_width="match_parent"
