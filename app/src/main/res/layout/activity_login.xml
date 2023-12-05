@@ -168,7 +168,7 @@
             android:background="@drawable/buttonbox"
             android:text="로그인"
             android:textColor="#72634A"
-            android:textSize="14sp"
+            android:textSize="14dp"
             android:textStyle="bold"
             android:scaleType="fitXY"
             android:elevation="10dp"
