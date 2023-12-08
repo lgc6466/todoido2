@@ -79,7 +79,7 @@
                         android:layout_height="70dp"
                         android:layout_below="@+id/wktxt"
                         android:layout_centerInParent="true"
-                        android:background="@drawable/emtionbg"
+                        android:background="?attr/emtion_bg"
                         android:padding="5dp"
                         android:src="@drawable/happy" />
                 </RelativeLayout>

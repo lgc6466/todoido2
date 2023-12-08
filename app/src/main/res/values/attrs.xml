@@ -3,4 +3,6 @@
     <attr name="gradient1" format="reference" />
     <attr name="week_bg" format="reference" />
     <attr name="year_bg" format="reference" />
+    <attr name="emtion_bg" format="reference" />
+    <attr name="popupbg" format="reference" />
 </resources>

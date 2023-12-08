@@ -13,6 +13,8 @@
         <item name="gradient1">@drawable/gradient_background</item>
         <item name="week_bg">@drawable/weekbg</item>
         <item name="year_bg">@drawable/yearbg</item>
+        <item name="emtion_bg">@drawable/emtionbg</item>
+        <item name="popupbg">@drawable/popup_bg</item>
 
     </style>
 
