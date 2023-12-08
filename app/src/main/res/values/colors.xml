@@ -5,6 +5,8 @@
     <color name="orange">#FF7A01</color>
     <color name="F4E87A">#F4E87A</color>
     <color name="yellow_border">#FFD233</color>
+    <color name="Pink_border">#FF8271</color>
+    <color name="green_border">#94FF62</color>
     <color name="not_selected_tab_text_color">#805B4F3B</color>
     <color name="selected_tab_text_color">#5B4F3B</color>
     <color name="gray_">#939393</color>
