@@ -27,4 +27,25 @@
         <item name="android:windowExitAnimation">@anim/slide_out_right</item>
     </style>
 
+    <style name="Theme1" parent="Base.Theme.Todoido">
+        <item name="gradient1">@drawable/gradient_background</item>
+        <item name="week_bg">@drawable/weekbg</item>
+        <item name="year_bg">@drawable/yearbg</item>
+    </style>
+
+    <style name="Theme2" parent="Base.Theme.Todoido">
+        <item name="gradient1">@drawable/gradient_background2</item>
+        <item name="week_bg">@drawable/weekbg2</item>
+        <item name="year_bg">@drawable/yearbg2</item>
+    </style>
+
+    <style name="Theme3" parent="Base.Theme.Todoido">
+        <item name="gradient1">@drawable/gradient_background3</item>
+        <item name="week_bg">@drawable/weekbg3</item>
+        <item name="year_bg">@drawable/yearbg3</item>
+    </style>
+
+
+
+
 </resources>
