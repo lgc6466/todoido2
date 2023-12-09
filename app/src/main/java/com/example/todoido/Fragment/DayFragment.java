@@ -144,6 +144,9 @@ public class DayFragment extends Fragment {
                 spinner.setSelection(((ArrayAdapter<String>)spinner.getAdapter()).getPosition(task.getSpinnerSelection()));
                 smartNotification.setChecked(task.isChecked());
                 selectedTaskPosition = adapter.getTaskList().indexOf(task);
+
+                // 토스트 메시지 추가
+                Toast.makeText(getContext(), "카드를 길게 누르면 일정을 공유할 수 있습니다", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -164,6 +167,13 @@ public class DayFragment extends Fragment {
                 String text = day_txt.getText().toString();
                 String spinnerSelection = spinner.getSelectedItem().toString();
                 boolean isChecked = smartNotification.isChecked();
+
+                // 텍스트가 비어 있는지 확인
+                if (text.isEmpty()) {
+                    // 텍스트가 비어 있다면 토스트 메시지를 표시하고 함수를 종료
+                    Toast.makeText(getContext(), "일정을 입력해주세요.", Toast.LENGTH_SHORT).show();
+                    return;
+                }
 
                 DayTask task = new DayTask(startTime, endTime, text, spinnerSelection, isChecked);
 

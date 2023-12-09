@@ -8,7 +8,7 @@
     tools:context=".Fragment.DayFragment">
 
     <RelativeLayout
-        android:layout_width="300dp"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_centerInParent="true"
         android:orientation="vertical">

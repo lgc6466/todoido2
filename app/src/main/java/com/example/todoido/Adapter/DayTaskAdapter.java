@@ -1,6 +1,7 @@
 package com.example.todoido.Adapter;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -50,7 +51,7 @@ public class DayTaskAdapter extends RecyclerView.Adapter<DayTaskAdapter.ViewHold
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_day, parent, false);
-        return new ViewHolder(view);
+        return new ViewHolder(view, this);  // ViewHolder 생성자에게 this (DayTaskAdapter 객체)를 전달합니다.
     }
 
     @Override
@@ -85,19 +86,49 @@ public class DayTaskAdapter extends RecyclerView.Adapter<DayTaskAdapter.ViewHold
         return taskList.size();
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    class ViewHolder extends RecyclerView.ViewHolder {  // static을 제거하였습니다.
         TextView startTime, endTime, contentText;
         ImageButton closeButton;
+        DayTaskAdapter adapter;
 
-        public ViewHolder(@NonNull View itemView) {
+
+
+        public ViewHolder(@NonNull View itemView, DayTaskAdapter adapter) {
             super(itemView);
+            this.adapter = adapter;
             startTime = itemView.findViewById(R.id.startTime);
             endTime = itemView.findViewById(R.id.endTime);
             contentText = itemView.findViewById(R.id.contentText);
             closeButton = itemView.findViewById(R.id.closeButton);
+
+            itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    int position = getAdapterPosition();
+                    if (position != RecyclerView.NO_POSITION) {
+                        DayTask task = adapter.taskList.get(position);  // 수정: adapter.taskList를 통해 taskList에 접근합니다.
+
+                        String startTime = task.getStartTime();
+                        String endTime = task.getEndTime();
+                        String text = task.getText();
+
+                        String shareText = "오늘 일정 공유"+"\n시작 시간: " + startTime + "\n종료 시간: " + endTime + "\n내용: " + text;
+
+                        Intent sendIntent = new Intent();
+                        sendIntent.setAction(Intent.ACTION_SEND);
+                        sendIntent.putExtra(Intent.EXTRA_TEXT, shareText);
+                        sendIntent.setType("text/plain");
+
+                        Intent shareIntent = Intent.createChooser(sendIntent, null);
+                        v.getContext().startActivity(shareIntent);
+
+                        return true;  // 이벤트가 처리되었음을 알립니다.
+                    }
+                    return false;
+                }
+            });
+
         }
     }
-
 }
-
 

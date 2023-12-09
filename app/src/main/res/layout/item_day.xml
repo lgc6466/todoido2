@@ -6,12 +6,14 @@
     android:orientation="vertical">
 
     <com.google.android.material.card.MaterialCardView
-        android:layout_width="280dp"
+        android:layout_width="match_parent"
         android:layout_height="110dp"
         android:background="@color/white"
         android:layout_marginBottom="10dp"
         android:layout_centerInParent="true"
         app:cardCornerRadius="20dp"
+        android:layout_marginStart="45dp"
+        android:layout_marginEnd="45dp"
         app:strokeColor="@color/yellow_border"
         app:strokeWidth="1dp">
 
@@ -19,17 +21,11 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:paddingLeft="30dp"
+            android:paddingLeft="35dp"
             android:paddingTop="15dp">
+
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-
-
-            <LinearLayout
-                android:layout_width="165dp"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
@@ -49,7 +45,6 @@
                     android:textColor="@color/selected_tab_text_color"
                     android:textSize="20dp" />
 
-
                 <TextView
                     android:id="@+id/endTime"
                     android:layout_width="wrap_content"
@@ -58,34 +53,38 @@
                     android:textColor="@color/selected_tab_text_color"
                     android:textSize="20dp" />
 
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:layout_weight="1" />
 
-
-            </LinearLayout>
                 <ImageButton
                     android:id="@+id/closeButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="50dp"
+                    android:layout_marginEnd="10dp"
                     android:background="@drawable/close" />
             </LinearLayout>
+
+
             <View
-                android:layout_width="220dp"
+                android:layout_width="match_parent"
                 android:layout_height="2dp"
+                android:layout_marginRight="40dp"
                 android:background="@drawable/dashed_line" />
 
             <TextView
+                android:paddingLeft="5dp"
                 android:id="@+id/contentText"
-                android:layout_width="230dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
-                android:textColor="@color/selected_tab_text_color"
+                android:layout_marginRight="40dp"
                 android:gravity="left"
                 android:hint="내용"
                 android:maxLines="2"
+                android:textColor="@color/selected_tab_text_color"
                 android:textSize="16dp" />
-
-
-
 
         </LinearLayout>
 
