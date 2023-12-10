@@ -1,6 +1,9 @@
 package com.example.todoido.Fragment;
 
+import static android.content.ContentValues.TAG;
+
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +24,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.todoido.Adapter.DayTaskAdapter;
 import com.example.todoido.R;
+import com.example.todoido.SnowView;
 import com.example.todoido.ViewModel.DayTask;
 import com.example.todoido.ViewModel.DayViewModel;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
@@ -29,8 +33,11 @@ import com.google.android.material.timepicker.MaterialTimePicker;
 import com.google.android.material.timepicker.TimeFormat;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
@@ -38,9 +45,7 @@ public class DayFragment extends Fragment {
     private BottomSheetBehavior bottomSheetBehavior;
     private FrameLayout bottomSheet;
     private Spinner spinner;
-
     private boolean isSheetVisible = false;
-
     FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
     private final DatabaseReference databaseRef = firebaseUser != null ? FirebaseDatabase.getInstance().getReference("Users").child(firebaseUser.getUid()).child("day") : null;
     private int selectedTaskPosition = -1;
@@ -98,7 +103,6 @@ public class DayFragment extends Fragment {
                 }
             }
         });
-
 
         View.OnClickListener timePickerClickListener = new View.OnClickListener() {
             @Override
@@ -196,7 +200,6 @@ public class DayFragment extends Fragment {
             }
         });
 
-
         bottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
             @Override
             public void onStateChanged(@NonNull View bottomSheet, int newState) {
@@ -214,6 +217,34 @@ public class DayFragment extends Fragment {
 
             }
         });
+
+        SnowView snowView = view.findViewById(R.id.snowView);
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser != null) {
+            FirebaseDatabase database = FirebaseDatabase.getInstance();
+            DatabaseReference userRef = database.getReference("snow").child(currentUser.getUid());
+
+            // Read the toggle state from the database
+            userRef.child("snowEffectEnabled").addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    Boolean snowEffectEnabled = dataSnapshot.getValue(Boolean.class);
+                    if (snowEffectEnabled != null && snowEffectEnabled) {
+                        // The toggle is enabled, so show the SnowView
+                        snowView.setVisibility(View.VISIBLE);
+                    } else {
+                        // The toggle is disabled or not set, so hide the SnowView
+                        snowView.setVisibility(View.INVISIBLE);
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    // Failed to read value
+                    Log.w(TAG, "Failed to read value.", databaseError.toException());
+                }
+            });
+        }
 
         return view;
     }

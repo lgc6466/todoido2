@@ -5,7 +5,6 @@
     android:layout_height="match_parent"
     tools:context=".Fragment.WeekFragment">
 
-
         <androidx.viewpager.widget.ViewPager
             android:id="@+id/week_viewPager"
             android:layout_width="match_parent"

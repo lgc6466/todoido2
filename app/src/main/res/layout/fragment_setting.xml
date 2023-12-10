@@ -262,8 +262,7 @@
                             android:layout_gravity="center"
                             android:background="@drawable/toggle_selector"
                             android:textOn=""
-                            android:textOff=""
-                            android:checked="false" />
+                            android:textOff="" />
 
                     </LinearLayout>
 
@@ -323,7 +322,7 @@
                             android:layout_alignParentEnd="true"
                             android:layout_marginLeft="40dp"
                             android:layout_marginTop="15dp"
-                            android:text="0.0.4(20231126)"
+                            android:text="0.0.9(20231211)"
                             android:textColor="#997C6B37"
                             android:textSize="14dp" />
                     </LinearLayout>

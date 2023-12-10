@@ -13,8 +13,8 @@ class SnowFlake {
     private static final float ANGLE_DIVISOR = 10000f;
     private static final float INCREMENT_LOWER = 2f;
     private static final float INCREMENT_UPPER = 4f;
-    private static final float FLAKE_SIZE_LOWER = 12f;
-    private static final float FLAKE_SIZE_UPPER = 25f;
+    private static final float FLAKE_SIZE_LOWER = 15f;
+    private static final float FLAKE_SIZE_UPPER = 40f;
 
     private final Random random;
     private final Point position;

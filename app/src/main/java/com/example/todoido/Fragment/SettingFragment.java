@@ -472,8 +472,6 @@ public class SettingFragment extends Fragment {
                     }
                 });
 
-
-
                 // '취소' 버튼을 찾아 클릭 리스너를 설정합니다.
                 Button cancelButton = dialog.findViewById(R.id.cancel_button);
                 cancelButton.setOnClickListener(new View.OnClickListener() {
@@ -488,20 +486,47 @@ public class SettingFragment extends Fragment {
         });
 
         // 눈 내리는 효과
-        final SnowView snowView = view.findViewById(R.id.snowView);
         ToggleButton toggleButton = view.findViewById(R.id.toggleButton1);
-        toggleButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    // 눈 내리는 효과 켜기
-                    snowView.setVisibility(View.VISIBLE);
-                } else {
-                    // 눈 내리는 효과 끄기
-                    snowView.setVisibility(View.INVISIBLE);
+        SnowView snowView = view.findViewById(R.id.snowView);
+
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser != null) {
+            FirebaseDatabase database = FirebaseDatabase.getInstance();
+            DatabaseReference userRef = database.getReference("snow").child(currentUser.getUid());
+
+            // Read the toggle state from the database
+            userRef.child("snowEffectEnabled").addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    Boolean snowEffectEnabled = dataSnapshot.getValue(Boolean.class);
+                    if (snowEffectEnabled != null) {
+                        // Set the toggle button state
+                        toggleButton.setChecked(snowEffectEnabled);
+
+                        // Set the SnowView visibility
+                        snowView.setVisibility(snowEffectEnabled ? View.VISIBLE : View.INVISIBLE);
+                    }
                 }
-            }
-        });
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    // Failed to read value
+                    Log.w(TAG, "Failed to read value.", databaseError.toException());
+                }
+            });
+
+            // Set the on check change listener for the toggle button
+            toggleButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    // Set the SnowView visibility
+                    snowView.setVisibility(isChecked ? View.VISIBLE : View.INVISIBLE);
+
+                    // Save the toggle state
+                    userRef.child("snowEffectEnabled").setValue(isChecked);
+                }
+            });
+        }
 
         return view;
     }

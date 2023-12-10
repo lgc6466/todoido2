@@ -6,6 +6,11 @@
     android:background="?attr/gradient1"
     tools:context=".WeekPage.Week1Fragment">
 
+    <com.example.todoido.SnowView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/snowView" />
+
     <RelativeLayout
         android:id="@+id/week1_top"
         android:layout_width="match_parent"

@@ -9,7 +9,6 @@
     android:padding="10dp"
     tools:context=".RegisterActivity">
 
-
     <LinearLayout
         android:layout_width="360dp"
         android:layout_height="match_parent"
