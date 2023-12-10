@@ -60,4 +60,5 @@ public class WeekFragment extends Fragment {
             return 4;
         }
     }
+
 }
