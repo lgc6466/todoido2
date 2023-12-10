@@ -1,5 +1,7 @@
 package com.example.todoido.Fragment;
 
+import static androidx.constraintlayout.helper.widget.MotionEffect.TAG;
+
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -11,8 +13,10 @@ import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.InputType;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,6 +42,8 @@ import com.example.todoido.LoginActivity;
 import com.example.todoido.R;
 import com.example.todoido.SnowView;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.tabs.TabLayout;
@@ -50,6 +56,9 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.HashMap;
 
 public class SettingFragment extends Fragment {
 
@@ -414,11 +423,56 @@ public class SettingFragment extends Fragment {
                 applyButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        // 라디오 버튼의 상태에 따라 테마를 변경하는 코드를 여기에 작성합니다.
-                        // ...
+                        String selectedTheme = null;
+                        if (radioButton1.isChecked()) {
+                            selectedTheme = "Theme2";
+                        } else if (radioButton2.isChecked()) {
+                            selectedTheme = "Theme1";
+                        } else if (radioButton3.isChecked()) {
+                            selectedTheme = "Theme3";
+                        }
+
+                        // Firebase에 테마 저장
+                        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+                        if(firebaseUser != null){
+                            DatabaseReference databaseRef = FirebaseDatabase.getInstance().getReference("Users").child(firebaseUser.getUid());
+                            databaseRef.child("theme").setValue(selectedTheme)
+                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+
+                                        @Override
+                                        public void onSuccess(Void aVoid) {
+                                            Log.d(TAG, "Successfully written theme to database!");
+
+                                            // 테마 적용을 위해 앱을 재시작하라는 토스트 메시지 표시
+                                            Toast.makeText(getActivity(), "테마 적용을 위해 처음화면으로 돌아갑니다.", Toast.LENGTH_SHORT).show();
+
+                                            // 모든 액티비티를 종료하고 LoginActivity를 다시 시작(자동로그인 추가후 메인으로 변경예정)
+                                            Intent intent = new Intent(getActivity(), LoginActivity.class);
+                                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                            startActivity(intent);
+
+                                            new Handler().postDelayed(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    getActivity().finish();
+                                                }
+                                            }, 2000);
+                                        }
+                                    })
+
+                                    .addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            Log.w(TAG, "Error writing theme to database", e);
+                                        }
+                                    });
+                        }
+
                         dialog.dismiss();
                     }
                 });
+
+
 
                 // '취소' 버튼을 찾아 클릭 리스너를 설정합니다.
                 Button cancelButton = dialog.findViewById(R.id.cancel_button);
