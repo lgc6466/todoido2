@@ -1,11 +1,13 @@
 package com.example.todoido.Fragment;
 
+import static android.content.Context.MODE_PRIVATE;
 import static androidx.constraintlayout.helper.widget.MotionEffect.TAG;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -39,6 +41,7 @@ import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
 import com.example.todoido.LoginActivity;
+import com.example.todoido.MainActivity;
 import com.example.todoido.R;
 import com.example.todoido.RegisterActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -281,7 +284,6 @@ public class SettingFragment extends Fragment {
         });
 
 
-        // 로그아웃
         Button logoutButton = view.findViewById(R.id.logout_btn);
         logoutButton.setPaintFlags(logoutButton.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
         logoutButton.setOnClickListener(new View.OnClickListener() {
@@ -291,12 +293,22 @@ public class SettingFragment extends Fragment {
                 FirebaseAuth.getInstance().signOut();
                 Toast.makeText(getContext(), "로그아웃 되었습니다", Toast.LENGTH_SHORT).show();
 
+                // SharedPreferences에서 자동로그인 체크 상태를 해제
+                SharedPreferences sharedPreferences = getActivity().getSharedPreferences("login", MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putBoolean("isAutoLoginChecked", false);
+                editor.remove("autoLoginId");
+                editor.remove("autoLoginPassword");
+                editor.apply();
+
                 // 로그인 화면으로 이동
                 Intent intent = new Intent(getActivity(), LoginActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
             }
         });
+
+
 
         // 회원 탈퇴
         Button deleteButton = view.findViewById(R.id.delet_btn);
@@ -444,10 +456,10 @@ public class SettingFragment extends Fragment {
                                             Log.d(TAG, "Successfully written theme to database!");
 
                                             // 테마 적용을 위해 앱을 재시작하라는 토스트 메시지 표시
-                                            Toast.makeText(getActivity(), "테마 적용을 위해 처음화면으로 돌아갑니다.", Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(getActivity(), "테마 적용을 위해 DAY로 돌아갑니다.", Toast.LENGTH_SHORT).show();
 
                                             // 모든 액티비티를 종료하고 LoginActivity를 다시 시작(자동로그인 추가후 메인으로 변경예정)
-                                            Intent intent = new Intent(getActivity(), LoginActivity.class);
+                                            Intent intent = new Intent(getActivity(), MainActivity.class);
                                             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                                             startActivity(intent);
 

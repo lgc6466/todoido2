@@ -34,7 +34,8 @@ public class LoginActivity extends AppCompatActivity {
     EditText et_id, et_pass;
     Button btn_login, btn_register;
     private boolean isChecked = false;
-    ImageButton eye, checkbox;
+    private boolean isAutoLoginChecked = false;
+    ImageButton eye, checkbox, checkbox2;
     private boolean isEyeOff = true;
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
@@ -50,9 +51,24 @@ public class LoginActivity extends AppCompatActivity {
         et_pass = findViewById(R.id.et_pass);
         btn_register = findViewById(R.id.btn_register);
         checkbox = findViewById(R.id.checkbox);
+        checkbox2 = findViewById(R.id.checkbox2);
         eye = findViewById(R.id.eye);
 
         Auth = FirebaseAuth.getInstance();
+
+        // SharedPreferences에서 로그인 정보와 체크박스 상태를 불러옵니다.
+        sharedPreferences = getSharedPreferences("login", MODE_PRIVATE);
+        String autoLoginId = sharedPreferences.getString("autoLoginId", "");
+        String autoLoginPassword = sharedPreferences.getString("autoLoginPassword", "");
+        isAutoLoginChecked = sharedPreferences.getBoolean("isAutoLoginChecked", false);
+        // 저장된 로그인 정보가 있고, 체크박스가 체크되어 있는 경우
+        if(isAutoLoginChecked && !TextUtils.isEmpty(autoLoginId) && !TextUtils.isEmpty(autoLoginPassword)) {
+            // 로그인 과정을 건너뛰고 바로 메인 화면으로 이동합니다.
+            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+            finish();
+        }
 
         btn_register.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -75,6 +91,16 @@ public class LoginActivity extends AppCompatActivity {
                 } else {
                     editor.remove("id");
                     editor.putBoolean("isChecked", false);
+                }
+
+                if(isAutoLoginChecked) {
+                    editor.putString("autoLoginId", str_id);
+                    editor.putString("autoLoginPassword", str_password); // 비밀번호는 암호화하여 저장하는 것이 좋습니다.
+                    editor.putBoolean("isAutoLoginChecked", true);
+                } else {
+                    editor.remove("autoLoginId");
+                    editor.remove("autoLoginPassword");
+                    editor.putBoolean("isAutoLoginChecked", false);
                 }
                 editor.apply();
 
@@ -147,12 +173,14 @@ public class LoginActivity extends AppCompatActivity {
         });
 
         checkbox.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.orange));
+        checkbox2.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.orange));
 
         sharedPreferences = getSharedPreferences("login", MODE_PRIVATE);
         editor = sharedPreferences.edit();
 
         // 체크박스 상태와 아이디를 불러옴
         isChecked = sharedPreferences.getBoolean("isChecked", false);
+        isAutoLoginChecked = sharedPreferences.getBoolean("isAutoLoginChecked", false);
         String savedId = sharedPreferences.getString("id", "");
 
         // 체크박스 상태에 따라 아이디를 설정하고 체크박스 모양 변경
@@ -161,6 +189,12 @@ public class LoginActivity extends AppCompatActivity {
             checkbox.setBackgroundResource(R.drawable.checked);
         } else {
             checkbox.setBackgroundResource(R.drawable.unchecked);
+        }
+
+        if(isAutoLoginChecked) {
+            checkbox2.setBackgroundResource(R.drawable.checked);
+        } else {
+            checkbox2.setBackgroundResource(R.drawable.unchecked);
         }
 
         //체크박스 모양 버튼
@@ -173,8 +207,29 @@ public class LoginActivity extends AppCompatActivity {
                     checkbox.setBackgroundResource(R.drawable.checked);
                 }
                 isChecked = !isChecked;
+
+                // 체크박스 상태를 SharedPreferences에 저장
+                editor.putBoolean("isChecked", isChecked);
+                editor.apply();
             }
         });
+
+        checkbox2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (isAutoLoginChecked) {
+                    checkbox2.setBackgroundResource(R.drawable.unchecked);
+                } else {
+                    checkbox2.setBackgroundResource(R.drawable.checked);
+                }
+                isAutoLoginChecked = !isAutoLoginChecked;
+
+                // 체크박스 상태를 SharedPreferences에 저장
+                editor.putBoolean("isAutoLoginChecked", isAutoLoginChecked);
+                editor.apply();
+            }
+        });
+
 
         // 보이기 숨기기 이미지버튼
         eye.setOnClickListener(new View.OnClickListener() {
