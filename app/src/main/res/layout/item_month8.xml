@@ -11,7 +11,7 @@
     <ImageView
         android:layout_width="250dp"
         android:layout_height="430dp"
-        android:background="@drawable/month5"
+        android:background="@drawable/month8"
         android:scaleType="fitCenter" />
 
     <LinearLayout
@@ -50,7 +50,7 @@
             android:layout_height="1dp"
             android:layout_gravity="center"
             android:layout_marginTop="10dp"
-            android:background="#F6BFFF" />
+            android:background="#0FA958" />
 
     <EditText
         android:id="@+id/contentEditText"
@@ -73,6 +73,6 @@
         android:layout_height="24dp"
         android:layout_marginLeft="215dp"
         android:layout_marginTop="10dp"
-        android:background="@drawable/monthclose5" />
+        android:background="@drawable/monthclose8" />
 
 </RelativeLayout>

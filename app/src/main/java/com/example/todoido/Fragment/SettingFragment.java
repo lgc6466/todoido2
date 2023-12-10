@@ -39,7 +39,9 @@ import android.widget.ToggleButton;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.todoido.Adapter.CardAdapter;
 import com.example.todoido.LoginActivity;
 import com.example.todoido.MainActivity;
 import com.example.todoido.R;
@@ -452,7 +454,6 @@ public class SettingFragment extends Fragment {
                             DatabaseReference databaseRef = FirebaseDatabase.getInstance().getReference("Users").child(firebaseUser.getUid());
                             databaseRef.child("theme").setValue(selectedTheme)
                                     .addOnSuccessListener(new OnSuccessListener<Void>() {
-
                                         @Override
                                         public void onSuccess(Void aVoid) {
                                             Log.d(TAG, "Successfully written theme to database!");
@@ -481,7 +482,6 @@ public class SettingFragment extends Fragment {
                                         }
                                     });
                         }
-
                         dialog.dismiss();
                     }
                 });

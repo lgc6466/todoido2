@@ -22,9 +22,11 @@ public class MonthViewModel extends ViewModel {
     private final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
     private final DatabaseReference databaseRef = firebaseUser != null ? FirebaseDatabase.getInstance().getReference("Users").child(firebaseUser.getUid()).child("Month").child("items") : null;
     private final MutableLiveData<List<MonthItem>> itemList = new MutableLiveData<>();
+    private final MutableLiveData<String> theme = new MutableLiveData<>();  // 테마를 저장하는 LiveData 객체
 
     public MonthViewModel() {
         fetchItems();
+        fetchTheme();  // 테마를 가져오는 메서드를 호출
     }
 
     private void fetchItems() {
@@ -43,6 +45,22 @@ public class MonthViewModel extends ViewModel {
                     tempItemList.add(new MonthItem(id, content, viewType, imageUri));
                 }
                 itemList.setValue(tempItemList);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void fetchTheme() {
+        DatabaseReference themeRef = FirebaseDatabase.getInstance().getReference("Users").child(firebaseUser.getUid()).child("theme");
+        themeRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                String themeValue = dataSnapshot.getValue(String.class);
+                theme.setValue(themeValue);
             }
 
             @Override
@@ -74,6 +92,9 @@ public class MonthViewModel extends ViewModel {
 
     public MutableLiveData<List<MonthItem>> getItemList() {
         return itemList;
+    }
+    public MutableLiveData<String> getTheme() {
+        return theme;  // 테마를 가져오는 메서드
     }
 
     public static class MonthItem {

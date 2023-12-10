@@ -37,10 +37,11 @@ public class MonthFragment extends Fragment {
 
     ArrayList<CardAdapter.CardItem> items = new ArrayList<>();
     CardAdapter adapter;
-    private ViewPager2 monthRecyclerView;
     private ViewPager2 viewPager;
     private ActivityResultLauncher<Intent> mGetContent;
     MonthViewModel monthViewModel;
+    private String newTheme = "Theme1";
+    String theme;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -80,8 +81,9 @@ public class MonthFragment extends Fragment {
                 page.setScaleY(v / 2 + 0.5f);
             }
         });
+
         // CardAdapter 설정
-        adapter = new CardAdapter(items, getContext(), viewPager, mGetContent, monthViewModel); // items를 인자로 전달
+        adapter = new CardAdapter(items, getContext(), viewPager, mGetContent, monthViewModel, newTheme, theme); // newTheme을 전달
         viewPager.setOrientation(ViewPager2.ORIENTATION_HORIZONTAL);
         viewPager.setAdapter(adapter);
 
@@ -103,6 +105,12 @@ public class MonthFragment extends Fragment {
                 items.add(cardItem);
             }
             adapter.notifyDataSetChanged();
+        });
+
+        // 테마 변경에 대한 관찰
+        monthViewModel.getTheme().observe(getViewLifecycleOwner(), newTheme -> {
+            // 테마에 따라 UI 갱신
+            adapter.onThemeChanged(newTheme);  // 어댑터에 새 테마 설정
         });
 
         SnowView snowView = view.findViewById(R.id.snowView);
@@ -135,8 +143,4 @@ public class MonthFragment extends Fragment {
 
         return view;
     }
-
-
-
-
 }

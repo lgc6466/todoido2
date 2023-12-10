@@ -1,5 +1,7 @@
 package com.example.todoido.Adapter;
 
+import static android.content.ContentValues.TAG;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -10,6 +12,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,6 +29,7 @@ import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
 
@@ -34,6 +38,8 @@ import com.example.todoido.R;
 import com.example.todoido.ViewModel.MonthViewModel;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -52,6 +58,20 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
     private ViewPager2 viewPager;
     private ActivityResultLauncher<Intent> mGetContent;
     private MonthViewModel monthViewModel;
+    private String newTheme;
+    private String currentTheme;
+    private String theme;
+
+    // 생성자
+    public CardAdapter(ArrayList<CardItem> items, Context context, ViewPager2 viewPager, ActivityResultLauncher<Intent> mGetContent, MonthViewModel monthViewModel, String newTheme, String Theme) {
+        this.items = items;
+        this.context = context;
+        this.viewPager = viewPager;
+        this.mGetContent = mGetContent;
+        this.monthViewModel = monthViewModel;
+        this.newTheme = newTheme;
+        this.theme = theme;
+    }
 
     static class CardViewHolder extends RecyclerView.ViewHolder {
         public TextWatcher textWatcher;
@@ -89,14 +109,6 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
                 }
             };
         }
-    }
-
-    public CardAdapter(ArrayList<CardItem> items, Context context, ViewPager2 viewPager, ActivityResultLauncher<Intent> mGetContent, MonthViewModel monthViewModel) {
-        this.items = items;
-        this.context = context;
-        this.viewPager = viewPager;
-        this.mGetContent = mGetContent;
-        this.monthViewModel = monthViewModel;
     }
 
     // 이미지를 설정할 메소드
@@ -154,22 +166,63 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
         }
     }
 
+    public void onThemeChanged(String newTheme) {
+        currentTheme = newTheme;  // 새 테마를 저장합니다.
+        notifyDataSetChanged();  // 뷰 갱신
+    }
+
     @NonNull
     @Override
     public CardViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view;
-        switch (viewType) {
-            case 0:
-                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_month1, parent, false);
+        switch (currentTheme) {
+            case "Theme1":
+                switch (viewType) {
+                    case 0:
+                        view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_month1, parent, false);
+                        break;
+                    case 1:
+                        view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_month2, parent, false);
+                        break;
+                    case 2:
+                        view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_month3, parent, false);
+                        break;
+                    default:
+                        throw new IllegalArgumentException("Invalid view type");
+                }
                 break;
-            case 1:
-                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_month2, parent, false);
+            case "Theme2":
+                switch (viewType) {
+                    case 0:
+                        view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_month4, parent, false);
+                        break;
+                    case 1:
+                        view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_month5, parent, false);
+                        break;
+                    case 2:
+                        view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_month6, parent, false);
+                        break;
+                    default:
+                        throw new IllegalArgumentException("Invalid theme");
+                }
                 break;
-            case 2:
-                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_month3, parent, false);
+            case "Theme3":
+                switch (viewType) {
+                    case 0:
+                        view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_month6, parent, false);
+                        break;
+                    case 1:
+                        view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_month8, parent, false);
+                        break;
+                    case 2:
+                        view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_month1, parent, false);
+                        break;
+                    default:
+                        throw new IllegalArgumentException("Invalid view type");
+                }
                 break;
             default:
-                throw new IllegalArgumentException("Invalid view type");
+                throw new IllegalArgumentException("Invalid theme");
         }
         return new CardViewHolder(view);
     }
