@@ -446,18 +446,17 @@ public class SettingFragment extends Fragment {
                                             // 테마 적용을 위해 앱을 재시작하라는 토스트 메시지 표시
                                             Toast.makeText(getActivity(), "테마 적용을 위해 처음화면으로 돌아갑니다.", Toast.LENGTH_SHORT).show();
 
-                                            // 모든 액티비티를 종료하고 LoginActivity를 다시 시작
+                                            // 모든 액티비티를 종료하고 LoginActivity를 다시 시작(자동로그인 추가후 메인으로 변경예정)
                                             Intent intent = new Intent(getActivity(), LoginActivity.class);
                                             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                                             startActivity(intent);
 
-                                            // 약간의 지연 시간 후에 현재 액티비티 종료
                                             new Handler().postDelayed(new Runnable() {
                                                 @Override
                                                 public void run() {
                                                     getActivity().finish();
                                                 }
-                                            }, 2000);  // 2초의 지연 시간
+                                            }, 2000);
                                         }
                                     })
 
