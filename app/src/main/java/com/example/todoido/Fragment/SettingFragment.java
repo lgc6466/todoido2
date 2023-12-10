@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
@@ -33,10 +34,9 @@ import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
-import com.bumptech.glide.Glide;
 import com.example.todoido.LoginActivity;
 import com.example.todoido.R;
-import com.example.todoido.RegisterActivity;
+import com.example.todoido.SnowView;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.card.MaterialCardView;
@@ -433,15 +433,18 @@ public class SettingFragment extends Fragment {
             }
         });
 
-        //눈 효과
+        // 눈 내리는 효과
+        final SnowView snowView = view.findViewById(R.id.snowView);
         ToggleButton toggleButton = view.findViewById(R.id.toggleButton1);
-        toggleButton.setOnClickListener(new View.OnClickListener() {
+        toggleButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public void onClick(View v) {
-
-                if (toggleButton.isChecked()) {
-                    toggleButton.setChecked(true);
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    // 눈 내리는 효과 켜기
+                    snowView.setVisibility(View.VISIBLE);
                 } else {
+                    // 눈 내리는 효과 끄기
+                    snowView.setVisibility(View.INVISIBLE);
                 }
             }
         });

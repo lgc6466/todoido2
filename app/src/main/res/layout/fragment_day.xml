@@ -47,6 +47,12 @@
     </ScrollView>
     </RelativeLayout>
     <include layout="@layout/day_bottomsheet" />
+
+    <com.example.todoido.SnowView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/snowView"
+        android:visibility="invisible" />
 </RelativeLayout>
 
 

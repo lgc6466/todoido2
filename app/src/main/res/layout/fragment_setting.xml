@@ -12,6 +12,11 @@
         android:background="#80000000"
         android:visibility="gone" />
 
+    <com.example.todoido.SnowView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/snowView"
+        android:visibility="invisible" />
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/setting_layout"
@@ -21,7 +26,6 @@
         android:background="@drawable/setback"
         android:visibility="visible"
         app:cardCornerRadius="0dp">
-
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -383,4 +387,6 @@
 
         </RelativeLayout>
     </com.google.android.material.card.MaterialCardView>
+
+
 </FrameLayout>
