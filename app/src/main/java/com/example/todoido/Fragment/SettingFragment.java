@@ -301,10 +301,12 @@ public class SettingFragment extends Fragment {
                 editor.remove("autoLoginPassword");
                 editor.apply();
 
-                // 로그인 화면으로 이동
-                Intent intent = new Intent(getActivity(), LoginActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
+                if (getActivity() != null) {
+                    Intent intent = new Intent(getActivity(), LoginActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                    getActivity().finish();
+                }
             }
         });
 
@@ -457,8 +459,6 @@ public class SettingFragment extends Fragment {
 
                                             // 테마 적용을 위해 앱을 재시작하라는 토스트 메시지 표시
                                             Toast.makeText(getActivity(), "테마 적용을 위해 DAY로 돌아갑니다.", Toast.LENGTH_SHORT).show();
-
-                                            // 모든 액티비티를 종료하고 LoginActivity를 다시 시작(자동로그인 추가후 메인으로 변경예정)
                                             Intent intent = new Intent(getActivity(), MainActivity.class);
                                             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                                             startActivity(intent);
@@ -466,9 +466,11 @@ public class SettingFragment extends Fragment {
                                             new Handler().postDelayed(new Runnable() {
                                                 @Override
                                                 public void run() {
-                                                    getActivity().finish();
+                                                    if (getActivity() != null) {
+                                                        getActivity().finish();
+                                                    }
                                                 }
-                                            }, 2000);
+                                            }, 2000);;
                                         }
                                     })
 
