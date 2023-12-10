@@ -69,14 +69,14 @@
                         android:layout_width="230dp"
                         android:layout_height="130dp"
                         android:layout_centerInParent="true"
-                        android:layout_marginTop="70dp"
+                        android:layout_marginTop="50dp"
                         android:background="@drawable/setbox" />
 
                     <LinearLayout
                         android:id="@+id/linearLayout1"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="50dp"
+                        android:layout_marginTop="40dp"
                         android:orientation="horizontal">
 
                         <TextView
@@ -191,7 +191,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="35dp"
                             android:gravity="center"
-                            android:text="이용 안내"
+                            android:text="앱 설정"
                             android:textColor="#5B4F3B"
                             android:textSize="18dp"
                             android:textStyle="bold" />
@@ -202,6 +202,104 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_below="@id/linearLayout3"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="40dp"
+                            android:layout_marginTop="15dp"
+                            android:gravity="center"
+                            android:text="테마 변경"
+                            android:textColor="#000000"
+                            android:textSize="16dp"
+                            android:textStyle="bold" />
+
+                        <Button
+                            android:id="@+id/theme_change"
+                            android:layout_width="wrap_content"
+                            android:layout_height="30dp"
+                            android:layout_alignParentEnd="true"
+                            android:layout_marginTop="15dp"
+                            android:layout_marginLeft="50dp"
+                            android:autoLink="none"
+                            android:background="#00000000"
+                            android:padding="0dp"
+                            android:text="테마 선택"
+                            android:textColor="#5B4F3B"
+                            android:textSize="14dp" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/linearLayout4"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="40dp"
+                            android:layout_marginTop="15dp"
+                            android:gravity="center"
+                            android:text="눈 효과"
+                            android:textColor="#000000"
+                            android:textSize="16dp"
+                            android:textStyle="bold" />
+
+                        <ToggleButton
+                            android:id="@+id/toggleButton1"
+                            android:layout_width="77dp"
+                            android:layout_height="44dp"
+                            android:layout_centerHorizontal="true"
+                            android:layout_centerVertical="true"
+                            android:layout_marginLeft="70dp"
+                            android:layout_marginTop="2dp"
+                            android:layout_gravity="center"
+                            android:background="@drawable/toggle_selector"
+                            android:textOn=""
+                            android:textOff=""
+                            android:checked="false" />
+
+                    </LinearLayout>
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="25dp">
+
+                    <ImageView
+                        android:layout_width="230dp"
+                        android:layout_height="130dp"
+                        android:layout_centerHorizontal="true"
+                        android:layout_centerVertical="true"
+                        android:background="@drawable/setbox" />
+
+                    <LinearLayout
+                        android:id="@+id/linearLayout5"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="15dp"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="35dp"
+                            android:gravity="center"
+                            android:text="이용 안내"
+                            android:textColor="#5B4F3B"
+                            android:textSize="18dp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/linearLayout6"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/linearLayout5"
                         android:orientation="horizontal">
 
                         <TextView
@@ -229,7 +327,7 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_below="@id/linearLayout4"
+                        android:layout_below="@id/linearLayout6"
                         android:orientation="horizontal">
 
                         <TextView

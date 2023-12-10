@@ -4,9 +4,11 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.InputType;
 import android.text.TextUtils;
@@ -16,16 +18,22 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
+import com.bumptech.glide.Glide;
 import com.example.todoido.LoginActivity;
 import com.example.todoido.R;
 import com.example.todoido.RegisterActivity;
@@ -172,7 +180,7 @@ public class SettingFragment extends Fragment {
                         // 현재 비밀번호와 새로운 비밀번호가 비어있지 않은지 확인
                         if (!TextUtils.isEmpty(currentPassword) && !TextUtils.isEmpty(newPassword)) {
                             // 새로운 비밀번호와 현재 비밀번호가 동일한지 확인
-                            if(currentPassword.equals(newPassword)) {
+                            if (currentPassword.equals(newPassword)) {
                                 Toast.makeText(getContext(), "새 비밀번호가 현재 비밀번호와 같습니다.", Toast.LENGTH_SHORT).show();
                             }
                             // 새로운 비밀번호와 비밀번호 확인이 일치하는지 확인
@@ -341,6 +349,100 @@ public class SettingFragment extends Fragment {
                 });
 
                 dialog.show();
+            }
+        });
+
+        //테마 변경
+        Button themeChange = view.findViewById(R.id.theme_change);
+        themeChange.setPaintFlags(themeChange.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+        themeChange.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final Dialog dialog = new Dialog(getActivity());
+                dialog.setContentView(R.layout.backdialog_layout);
+                dialog.getWindow().setBackgroundDrawableResource(R.drawable.backdialog_shape);
+
+                // 각 LinearLayout과 RadioButton을 찾습니다.
+                LinearLayout layout1 = dialog.findViewById(R.id.layout1);
+                LinearLayout layout2 = dialog.findViewById(R.id.layout2);
+                LinearLayout layout3 = dialog.findViewById(R.id.layout3);
+
+                RadioButton radioButton1 = dialog.findViewById(R.id.radio1);
+                RadioButton radioButton2 = dialog.findViewById(R.id.radio2);
+                RadioButton radioButton3 = dialog.findViewById(R.id.radio3);
+
+                ColorStateList colorStateList = ContextCompat.getColorStateList(getActivity(), R.color.radio_button_selector);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    radioButton1.setButtonTintList(colorStateList);
+                    radioButton2.setButtonTintList(colorStateList);
+                    radioButton3.setButtonTintList(colorStateList);
+                }
+
+                // 라디오 버튼에 체크 변경 리스너를 설정합니다.
+                radioButton1.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                        if (isChecked) {
+                            radioButton2.setChecked(false);
+                            radioButton3.setChecked(false);
+                        }
+                    }
+                });
+
+                radioButton2.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                        if (isChecked) {
+                            radioButton1.setChecked(false);
+                            radioButton3.setChecked(false);
+                        }
+                    }
+                });
+
+                radioButton3.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                        if (isChecked) {
+                            radioButton1.setChecked(false);
+                            radioButton2.setChecked(false);
+                        }
+                    }
+                });
+
+                // '적용' 버튼을 찾아 클릭 리스너를 설정합니다.
+                Button applyButton = dialog.findViewById(R.id.apply_button);
+                applyButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        // 라디오 버튼의 상태에 따라 테마를 변경하는 코드를 여기에 작성합니다.
+                        // ...
+                        dialog.dismiss();
+                    }
+                });
+
+                // '취소' 버튼을 찾아 클릭 리스너를 설정합니다.
+                Button cancelButton = dialog.findViewById(R.id.cancel_button);
+                cancelButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                    }
+                });
+
+                dialog.show();
+            }
+        });
+
+        //눈 효과
+        ToggleButton toggleButton = view.findViewById(R.id.toggleButton1);
+        toggleButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if (toggleButton.isChecked()) {
+                    toggleButton.setChecked(true);
+                } else {
+                }
             }
         });
 
