@@ -175,8 +175,14 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
     @Override
     public CardViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view;
+        if (currentTheme == null || (!currentTheme.equals("Theme1") && !currentTheme.equals("Theme2") && !currentTheme.equals("Theme3"))) {
+            // currentTheme이 null이거나 유효하지 않은 테마일 경우 기본 테마로 설정
+            currentTheme = "Theme1";
+        }
+
         switch (currentTheme) {
             case "Theme1":
+                // Theme1에 대한 처리
                 switch (viewType) {
                     case 0:
                         view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_month1, parent, false);
@@ -192,6 +198,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
                 }
                 break;
             case "Theme2":
+                // Theme2에 대한 처리
                 switch (viewType) {
                     case 0:
                         view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_month4, parent, false);
@@ -207,6 +214,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
                 }
                 break;
             case "Theme3":
+                // Theme3에 대한 처리
                 switch (viewType) {
                     case 0:
                         view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_month6, parent, false);
@@ -224,8 +232,10 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
             default:
                 throw new IllegalArgumentException("Invalid theme");
         }
+
         return new CardViewHolder(view);
     }
+
 
     public void onBindViewHolder(@NonNull CardViewHolder holder, @SuppressLint("RecyclerView") int position) {
         // 이전에 설정한 TextWatcher 제거
