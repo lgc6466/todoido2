@@ -43,7 +43,7 @@
             android:layout_width="45dp"
             android:layout_height="65dp"
             android:layout_marginLeft="3dp"
-            android:src="@drawable/Ic_angry" />
+            android:src="@drawable/ic_angry" />
 
 
     </LinearLayout>
