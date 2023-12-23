@@ -82,19 +82,19 @@ public class Week3Fragment extends BaseWeekFragment {
                     if (selectedEmoji != null) {
                         switch (selectedEmoji) {
                             case "happy":
-                                mainImageView.setImageResource(R.drawable.happy2);
+                                mainImageView.setImageResource(R.drawable.ic_happy2);
                                 break;
                             case "smile":
-                                mainImageView.setImageResource(R.drawable.smile);
+                                mainImageView.setImageResource(R.drawable.ic_smile);
                                 break;
                             case "soso":
-                                mainImageView.setImageResource(R.drawable.soso);
+                                mainImageView.setImageResource(R.drawable.ic_soso);
                                 break;
                             case "bad":
-                                mainImageView.setImageResource(R.drawable.bad);
+                                mainImageView.setImageResource(R.drawable.ic_bad);
                                 break;
                             case "angry":
-                                mainImageView.setImageResource(R.drawable.angry);
+                                mainImageView.setImageResource(R.drawable.ic_angry);
                                 break;
                         }
                     }

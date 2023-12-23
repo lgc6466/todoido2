@@ -86,7 +86,7 @@
                         android:layout_centerInParent="true"
                         android:background="?attr/emtion_bg"
                         android:padding="5dp"
-                        android:src="@drawable/happy" />
+                        android:src="@drawable/ic_happy" />
                 </RelativeLayout>
 
 

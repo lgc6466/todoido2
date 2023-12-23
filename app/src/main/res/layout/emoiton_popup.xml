@@ -15,35 +15,35 @@
             android:layout_width="50dp"
             android:layout_height="65dp"
             android:layout_marginLeft="2dp"
-            android:src="@drawable/happy2" />
+            android:src="@drawable/ic_happy2" />
 
         <ImageView
             android:id="@+id/smile"
             android:layout_width="45dp"
             android:layout_height="65dp"
             android:layout_marginLeft="3dp"
-            android:src="@drawable/smile" />
+            android:src="@drawable/ic_smile" />
 
         <ImageView
             android:id="@+id/soso"
             android:layout_width="45dp"
             android:layout_height="65dp"
             android:layout_marginLeft="3dp"
-            android:src="@drawable/soso" />
+            android:src="@drawable/ic_soso" />
 
         <ImageView
             android:id="@+id/bad"
             android:layout_width="45dp"
             android:layout_height="65dp"
             android:layout_marginLeft="3dp"
-            android:src="@drawable/bad" />
+            android:src="@drawable/ic_bad" />
 
         <ImageView
             android:id="@+id/angry"
             android:layout_width="45dp"
             android:layout_height="65dp"
             android:layout_marginLeft="3dp"
-            android:src="@drawable/angry" />
+            android:src="@drawable/Ic_angry" />
 
 
     </LinearLayout>

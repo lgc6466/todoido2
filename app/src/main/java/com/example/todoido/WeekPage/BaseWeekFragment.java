@@ -55,7 +55,7 @@ public abstract class BaseWeekFragment extends Fragment {
         happyIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mainImageView.setImageResource(R.drawable.happy2);
+                mainImageView.setImageResource(R.drawable.ic_happy2);
                 adapter.setSelectedEmoji("happy");  // 선택한 이모지를 WeekAdapter에 전달하고 Firebase에 저장
                 dialog.dismiss();
             }
@@ -66,7 +66,7 @@ public abstract class BaseWeekFragment extends Fragment {
         smileIcon. setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mainImageView.setImageResource(R.drawable.smile);
+                mainImageView.setImageResource(R.drawable.ic_smile);
                 adapter.setSelectedEmoji("smile");
                 dialog.dismiss();
             }
@@ -76,7 +76,7 @@ public abstract class BaseWeekFragment extends Fragment {
         sosoIcon. setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mainImageView.setImageResource(R.drawable.soso);
+                mainImageView.setImageResource(R.drawable.ic_soso);
                 adapter.setSelectedEmoji("soso");
                 dialog.dismiss();
             }
@@ -86,7 +86,7 @@ public abstract class BaseWeekFragment extends Fragment {
         badIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mainImageView.setImageResource(R.drawable.bad);
+                mainImageView.setImageResource(R.drawable.ic_bad);
                 adapter.setSelectedEmoji("bad");
                 dialog.dismiss();
             }
@@ -96,7 +96,7 @@ public abstract class BaseWeekFragment extends Fragment {
         angryIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mainImageView.setImageResource(R.drawable.angry);
+                mainImageView.setImageResource(R.drawable.ic_angry);
                 adapter.setSelectedEmoji("angry");
                 dialog.dismiss();
             }
