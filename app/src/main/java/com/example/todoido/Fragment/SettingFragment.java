@@ -212,6 +212,10 @@ public class SettingFragment extends Fragment {
                                                     if (task.isSuccessful()) {
                                                         Toast.makeText(getContext(), "비밀번호가 성공적으로 변경되었습니다.", Toast.LENGTH_SHORT).show();
                                                         dialog.dismiss();  // Dialog 닫기
+
+                                                        Intent intent = new Intent(getActivity(), LoginActivity.class);
+                                                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                                        startActivity(intent);
                                                     } else {
                                                         Toast.makeText(getContext(), "비밀번호 변경에 실패했습니다.", Toast.LENGTH_SHORT).show();
                                                     }
@@ -286,6 +290,7 @@ public class SettingFragment extends Fragment {
         });
 
 
+        // 로그아웃
         Button logoutButton = view.findViewById(R.id.logout_btn);
         logoutButton.setPaintFlags(logoutButton.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
         logoutButton.setOnClickListener(new View.OnClickListener() {
