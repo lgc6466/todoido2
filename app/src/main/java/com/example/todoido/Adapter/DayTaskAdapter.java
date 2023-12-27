@@ -104,9 +104,12 @@ public class DayTaskAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     }
 
     private void bindHeaderViewHolder(HeaderViewHolder holder, int position) {
-        // 헤더의 경우 특별한 작업이 필요하다면 이곳에서 처리
-        // 현재는 단순히 텍스트만 설정
-        holder.dateText.setText(taskList.get(position).getDate());
+        DayTask header = taskList.get(position);
+        String formattedDate = header.getDate(); // 날짜 정보 가져오기
+        String dayOfWeek = DayTask.getDayOfWeek(formattedDate); // 요일 정보 가져오기
+
+        String displayText = formattedDate + " " + dayOfWeek+ " >";
+        holder.dateText.setText(displayText);
     }
 
     static class ItemViewHolder extends RecyclerView.ViewHolder {

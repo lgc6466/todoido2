@@ -70,7 +70,7 @@ public class DayViewModel extends ViewModel {
             String id = databaseRef.push().getKey();
             task.setId(id);
 
-            String currentDate = task.getDate(); // 헤더를 생성할 때 사용할 날짜 정보 가져오기
+            String currentDate = task.getDate();
 
             if (!headerMap.containsKey(currentDate)) {
                 DayTask header = new DayTask(currentDate);

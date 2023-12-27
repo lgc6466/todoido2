@@ -22,12 +22,11 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:paddingLeft="5dp"
+            android:paddingStart="6dp"
             android:paddingTop="5dp">
 
             <TextView
                 android:id="@+id/tv_date"
-                android:text="2023년 12월 27일 수요일  >"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/selected_tab_text_color"
