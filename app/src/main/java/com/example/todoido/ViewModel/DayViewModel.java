@@ -13,15 +13,19 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class DayViewModel extends ViewModel {
     private MutableLiveData<List<DayTask>> taskList;
     private DatabaseReference databaseRef;
+    private Map<String, Boolean> headerMap;
 
     public DayViewModel() {
         taskList = new MutableLiveData<>();
         taskList.setValue(new ArrayList<>());
+        headerMap = new HashMap<>();
 
         FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         databaseRef = firebaseUser != null ? FirebaseDatabase.getInstance().getReference("Users").child(firebaseUser.getUid()).child("day") : null;
@@ -34,6 +38,14 @@ public class DayViewModel extends ViewModel {
 
                     for (DataSnapshot taskSnapshot : dataSnapshot.getChildren()) {
                         DayTask task = taskSnapshot.getValue(DayTask.class);
+
+                        if (!headerMap.containsKey(task.getDate())) {
+                            DayTask header = new DayTask(task.getDate());
+                            header.setHeader(true);
+                            newTaskList.add(header);
+                            headerMap.put(task.getDate(), true);
+                        }
+
                         newTaskList.add(task);
                     }
 
@@ -42,11 +54,12 @@ public class DayViewModel extends ViewModel {
 
                 @Override
                 public void onCancelled(@NonNull DatabaseError databaseError) {
-
+                    // 에러 처리
                 }
             });
         }
     }
+
 
     public MutableLiveData<List<DayTask>> getTaskList() {
         return taskList;
@@ -56,6 +69,16 @@ public class DayViewModel extends ViewModel {
         if (databaseRef != null) {
             String id = databaseRef.push().getKey();
             task.setId(id);
+
+            String currentDate = task.getDate(); // 헤더를 생성할 때 사용할 날짜 정보 가져오기
+
+            if (!headerMap.containsKey(currentDate)) {
+                DayTask header = new DayTask(currentDate);
+                header.setHeader(true);
+                taskList.getValue().add(header);
+                headerMap.put(currentDate, true);
+            }
+
             databaseRef.child(id).setValue(task);
 
             List<DayTask> currentList = taskList.getValue();
@@ -79,6 +102,4 @@ public class DayViewModel extends ViewModel {
             taskList.setValue(currentList);
         }
     }
-
 }
-

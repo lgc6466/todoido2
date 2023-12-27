@@ -18,20 +18,16 @@
         android:layout_centerInParent="true"
         android:orientation="vertical">
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scrollbars="none">
-
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:orientation="vertical">
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/dayRecyclerView"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="0dp"
+                android:layout_weight="1"
                 android:layout_marginTop="40dp"
                 android:gravity="center"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
@@ -47,9 +43,8 @@
                 android:textColor="@color/selected_tab_text_color"
                 app:cornerRadius="20dp"
                 app:elevation="4dp" />
-
         </LinearLayout>
-    </ScrollView>
+
     </RelativeLayout>
     <include layout="@layout/day_bottomsheet" />
 

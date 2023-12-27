@@ -39,7 +39,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class DayFragment extends Fragment {
     private BottomSheetBehavior bottomSheetBehavior;
@@ -49,10 +51,10 @@ public class DayFragment extends Fragment {
     FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
     private final DatabaseReference databaseRef = firebaseUser != null ? FirebaseDatabase.getInstance().getReference("Users").child(firebaseUser.getUid()).child("day") : null;
     private int selectedTaskPosition = -1;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_day, container, false);
-
         bottomSheet = view.findViewById(R.id.sheet_day);
         bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
         EditText day_txt = view.findViewById(R.id.day_txt);
@@ -133,7 +135,7 @@ public class DayFragment extends Fragment {
         timePickerButton.setOnClickListener(timePickerClickListener);
         timePickerButton2.setOnClickListener(timePickerClickListener);
 
-        DayViewModel dayViewModel = new ViewModelProvider(requireActivity()).get(DayViewModel.class);
+        DayViewModel dayViewModel = new ViewModelProvider(this).get(DayViewModel.class);
         RecyclerView recyclerView = view.findViewById(R.id.dayRecyclerView);
         DayTaskAdapter adapter = new DayTaskAdapter(new ArrayList<>(), null);
         adapter.setOnItemClickListener(new DayTaskAdapter.OnItemClickListener() {
@@ -179,7 +181,11 @@ public class DayFragment extends Fragment {
                     return;
                 }
 
-                DayTask task = new DayTask(startTime, endTime, text, spinnerSelection, isChecked);
+                // 현재 날짜 정보를 가져오기
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy년 MM월 dd일");
+                String currentDate = sdf.format(new Date());
+
+                DayTask task = new DayTask(currentDate, startTime, endTime, text, spinnerSelection, isChecked);
 
                 if (selectedTaskPosition != -1) {
                     task.setId(adapter.getTaskList().get(selectedTaskPosition).getId());
@@ -187,6 +193,7 @@ public class DayFragment extends Fragment {
 
                     selectedTaskPosition = -1;
                 } else {
+                    // 날짜 정보를 헤더 생성에 전달
                     dayViewModel.addTask(task);
                 }
                 bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
@@ -217,6 +224,7 @@ public class DayFragment extends Fragment {
 
             }
         });
+
 
         SnowView snowView = view.findViewById(R.id.snowView);
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();

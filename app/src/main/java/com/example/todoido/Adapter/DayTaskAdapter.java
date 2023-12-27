@@ -19,7 +19,9 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.List;
 
-public class DayTaskAdapter extends RecyclerView.Adapter<DayTaskAdapter.ViewHolder> {
+public class DayTaskAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+    private static final int VIEW_TYPE_ITEM = 0;
+    private static final int VIEW_TYPE_HEADER = 1;
 
     private List<DayTask> taskList;
     private OnItemClickListener listener;
@@ -37,7 +39,6 @@ public class DayTaskAdapter extends RecyclerView.Adapter<DayTaskAdapter.ViewHold
         this.listener = listener;
     }
 
-
     public interface OnItemClickListener {
         void onItemClick(DayTask task);
     }
@@ -49,36 +50,25 @@ public class DayTaskAdapter extends RecyclerView.Adapter<DayTaskAdapter.ViewHold
 
     @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_day, parent, false);
-        return new ViewHolder(view, this);  // ViewHolder 생성자에게 this (DayTaskAdapter 객체)를 전달합니다.
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+
+        if (viewType == VIEW_TYPE_HEADER) {
+            View headerView = inflater.inflate(R.layout.item_day_date, parent, false);
+            return new HeaderViewHolder(headerView);
+        } else {
+            View itemView = inflater.inflate(R.layout.item_day, parent, false);
+            return new ItemViewHolder(itemView, this);
+        }
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, @SuppressLint("RecyclerView") int position) {
-        DayTask task = taskList.get(position);
-        holder.startTime.setText(task.getStartTime());
-        holder.endTime.setText(task.getEndTime());
-        holder.contentText.setText(task.getText());
-        if (listener != null) { // null 체크를 추가했습니다.
-            holder.itemView.setOnClickListener(v -> listener.onItemClick(task));
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+        if (holder instanceof ItemViewHolder) {
+            bindItemViewHolder((ItemViewHolder) holder, position);
+        } else if (holder instanceof HeaderViewHolder) {
+            bindHeaderViewHolder((HeaderViewHolder) holder, position);
         }
-
-        holder.closeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // taskList에서 제거합니다.
-                taskList.remove(task);
-                notifyItemRemoved(position);
-
-                // Firebase 데이터베이스에서 제거합니다.
-                DatabaseReference taskRef = FirebaseDatabase.getInstance().getReference("Users")
-                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                        .child("day")
-                        .child(task.getId()); // 이 부분은 task가 Firebase에 저장된 ID를 가지고 있다고 가정합니다.
-                taskRef.removeValue();
-            }
-        });
     }
 
     @Override
@@ -86,14 +76,45 @@ public class DayTaskAdapter extends RecyclerView.Adapter<DayTaskAdapter.ViewHold
         return taskList.size();
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder {  // static을 제거하였습니다.
+    @Override
+    public int getItemViewType(int position) {
+        return taskList.get(position).isHeader() ? VIEW_TYPE_HEADER : VIEW_TYPE_ITEM;
+    }
+
+    private void bindItemViewHolder(ItemViewHolder holder, int position) {
+        DayTask task = taskList.get(position);
+        holder.startTime.setText(task.getStartTime());
+        holder.endTime.setText(task.getEndTime());
+        holder.contentText.setText(task.getText());
+
+        if (listener != null) {
+            holder.itemView.setOnClickListener(v -> listener.onItemClick(task));
+        }
+
+        holder.closeButton.setOnClickListener(v -> {
+            taskList.remove(task);
+            notifyItemRemoved(position);
+
+            DatabaseReference taskRef = FirebaseDatabase.getInstance().getReference("Users")
+                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                    .child("day")
+                    .child(task.getId());
+            taskRef.removeValue();
+        });
+    }
+
+    private void bindHeaderViewHolder(HeaderViewHolder holder, int position) {
+        // 헤더의 경우 특별한 작업이 필요하다면 이곳에서 처리
+        // 현재는 단순히 텍스트만 설정
+        holder.dateText.setText(taskList.get(position).getDate());
+    }
+
+    static class ItemViewHolder extends RecyclerView.ViewHolder {
         TextView startTime, endTime, contentText;
         ImageButton closeButton;
         DayTaskAdapter adapter;
 
-
-
-        public ViewHolder(@NonNull View itemView, DayTaskAdapter adapter) {
+        public ItemViewHolder(@NonNull View itemView, DayTaskAdapter adapter) {
             super(itemView);
             this.adapter = adapter;
             startTime = itemView.findViewById(R.id.startTime);
@@ -101,34 +122,40 @@ public class DayTaskAdapter extends RecyclerView.Adapter<DayTaskAdapter.ViewHold
             contentText = itemView.findViewById(R.id.contentText);
             closeButton = itemView.findViewById(R.id.closeButton);
 
-            itemView.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-                    int position = getAdapterPosition();
-                    if (position != RecyclerView.NO_POSITION) {
-                        DayTask task = adapter.taskList.get(position);  // 수정: adapter.taskList를 통해 taskList에 접근합니다.
+            itemView.setOnLongClickListener(v -> {
+                int position = getAdapterPosition();
+                if (position != RecyclerView.NO_POSITION) {
+                    DayTask task = adapter.taskList.get(position);
 
-                        String startTime = task.getStartTime();
-                        String endTime = task.getEndTime();
-                        String text = task.getText();
+                    String startTime = task.getStartTime();
+                    String endTime = task.getEndTime();
+                    String text = task.getText();
 
-                        String shareText = "오늘 일정 공유"+"\n시작 시간: " + startTime + "\n종료 시간: " + endTime + "\n내용: " + text;
+                    String shareText = "오늘 일정 공유"+"\n시작 시간: " + startTime + "\n종료 시간: " + endTime + "\n내용: " + text;
 
-                        Intent sendIntent = new Intent();
-                        sendIntent.setAction(Intent.ACTION_SEND);
-                        sendIntent.putExtra(Intent.EXTRA_TEXT, shareText);
-                        sendIntent.setType("text/plain");
+                    Intent sendIntent = new Intent();
+                    sendIntent.setAction(Intent.ACTION_SEND);
+                    sendIntent.putExtra(Intent.EXTRA_TEXT, shareText);
+                    sendIntent.setType("text/plain");
 
-                        Intent shareIntent = Intent.createChooser(sendIntent, null);
-                        v.getContext().startActivity(shareIntent);
+                    Intent shareIntent = Intent.createChooser(sendIntent, null);
+                    v.getContext().startActivity(shareIntent);
 
-                        return true;  // 이벤트가 처리되었음을 알립니다.
-                    }
-                    return false;
+                    return true;
                 }
+                return false;
             });
+        }
+    }
 
+    static class HeaderViewHolder extends RecyclerView.ViewHolder {
+        TextView dateText;
+
+        public HeaderViewHolder(@NonNull View itemView) {
+            super(itemView);
+            dateText = itemView.findViewById(R.id.tv_date);
         }
     }
 }
+
 
