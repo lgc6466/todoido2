@@ -12,4 +12,5 @@
     <color name="gray_">#939393</color>
     <color name="FFFFFF">#FFFFFF</color>
     <color name="asdf">#72634A</color>
+    <color name="black_overlay">#80000000</color>
 </resources>

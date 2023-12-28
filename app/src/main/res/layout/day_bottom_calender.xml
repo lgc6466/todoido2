@@ -5,11 +5,20 @@
     android:layout_height="match_parent">
 
     <FrameLayout
-        android:id="@+id/sheet_day"
+        android:id="@+id/blackBackground"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#80000000"
+        android:visibility="gone"
+        android:clickable="true"/>
+
+    <FrameLayout
+        android:id="@+id/sheet_day_calendar"
         android:layout_width="match_parent"
         android:layout_height="380dp"
         android:background="@drawable/rounder"
         app:behavior_hideable="false"
+        app:behavior_peekHeight="0dp"
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
         <LinearLayout

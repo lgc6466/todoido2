@@ -25,6 +25,7 @@ public class DayTaskAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     private List<DayTask> taskList;
     private OnItemClickListener listener;
+    private OnHeaderClickListener headerClickListener;
 
     public void setTaskList(List<DayTask> tasks) {
         this.taskList = tasks;
@@ -37,6 +38,14 @@ public class DayTaskAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     public void setOnItemClickListener(OnItemClickListener listener) {
         this.listener = listener;
+    }
+
+    public void setOnHeaderClickListener(OnHeaderClickListener listener) {
+        this.headerClickListener = listener;
+    }
+
+    public interface OnHeaderClickListener {
+        void onHeaderClick(DayTask header);
     }
 
     public interface OnItemClickListener {
@@ -110,8 +119,13 @@ public class DayTaskAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
         String displayText = formattedDate + " " + dayOfWeek+ " >";
         holder.dateText.setText(displayText);
-    }
 
+        holder.itemView.setOnClickListener(v -> {
+            if (headerClickListener != null) {
+                headerClickListener.onHeaderClick(header);
+            }
+        });
+    }
     static class ItemViewHolder extends RecyclerView.ViewHolder {
         TextView startTime, endTime, contentText;
         ImageButton closeButton;

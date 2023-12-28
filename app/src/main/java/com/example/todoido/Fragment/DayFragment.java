@@ -17,6 +17,7 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -46,18 +47,32 @@ import java.util.Date;
 public class DayFragment extends Fragment {
     private BottomSheetBehavior bottomSheetBehavior;
     private FrameLayout bottomSheet;
+    private FrameLayout bottomSheetCalendar;  // Add this line
+    private BottomSheetBehavior bottomSheetBehaviorCalendar;  // Add this line
+    private FrameLayout blackBackground;
     private Spinner spinner;
     private boolean isSheetVisible = false;
     FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
     private final DatabaseReference databaseRef = firebaseUser != null ? FirebaseDatabase.getInstance().getReference("Users").child(firebaseUser.getUid()).child("day") : null;
     private int selectedTaskPosition = -1;
 
+    private void createBlackBackground() {
+        blackBackground.setVisibility(View.VISIBLE);
+    }
+
+    private void removeBlackBackground() {
+        blackBackground.setVisibility(View.GONE);
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_day, container, false);
         bottomSheet = view.findViewById(R.id.sheet_day);
+        bottomSheetCalendar = view.findViewById(R.id.sheet_day_calendar);  // Add this line
         bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
+        bottomSheetBehaviorCalendar = BottomSheetBehavior.from(bottomSheetCalendar);  // Add this line
         EditText day_txt = view.findViewById(R.id.day_txt);
+        blackBackground = view.findViewById(R.id.blackBackground);
         CheckBox smartNotification = view.findViewById(R.id.smart_notification);
 
         spinner = view.findViewById(R.id.spinner);
@@ -156,6 +171,67 @@ public class DayFragment extends Fragment {
             }
         });
 
+        adapter.setOnHeaderClickListener(new DayTaskAdapter.OnHeaderClickListener() {
+            @Override
+            public void onHeaderClick(DayTask header) {
+                View includedLayout = view.findViewById(R.id.sheet_day_calendar);
+                BottomSheetBehavior<View> behavior = BottomSheetBehavior.from(includedLayout);
+                FrameLayout blackBackground = view.findViewById(R.id.blackBackground);
+
+                if (behavior != null) {
+                    if (behavior.getState() == BottomSheetBehavior.STATE_EXPANDED) {
+                        behavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                        blackBackground.setVisibility(View.GONE);
+                    } else {
+                        behavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                        blackBackground.setVisibility(View.VISIBLE);
+                    }
+                }
+            }
+        });
+
+        blackBackground.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                View includedLayout = view.findViewById(R.id.sheet_day_calendar);
+                BottomSheetBehavior<View> behavior = BottomSheetBehavior.from(includedLayout);
+                FrameLayout blackBackground = view.findViewById(R.id.blackBackground);
+
+                if (behavior != null) {
+                    if (behavior.getState() == BottomSheetBehavior.STATE_EXPANDED) {
+                        behavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                        blackBackground.setVisibility(View.GONE);
+                    } else if (behavior.getState() == BottomSheetBehavior.STATE_COLLAPSED) {
+                        behavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+                        blackBackground.setVisibility(View.GONE);
+                    }
+                }
+            }
+        });
+
+        bottomSheetBehaviorCalendar.addBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+            @Override
+            public void onStateChanged(@NonNull View bottomSheet, int newState) {
+                if (newState == BottomSheetBehavior.STATE_EXPANDED) {
+                    // BottomSheet가 열렸을 때, 검은 배경을 표시
+                    createBlackBackground();
+                } else if (newState == BottomSheetBehavior.STATE_COLLAPSED || newState == BottomSheetBehavior.STATE_HIDDEN) {
+                    // BottomSheet가 닫혔을 때, 검은 배경을 감추기
+                    removeBlackBackground();
+                }
+            }
+
+            @Override
+            public void onSlide(@NonNull View bottomSheet, float slideOffset) {
+                // 슬라이드 중에 추가적인 작업이 필요하면 여기에 구현
+                if (slideOffset == 0.0) {
+                    // 슬라이드가 완전히 닫혔을 때, 검은 배경을 감추기
+                    removeBlackBackground();
+                }
+            }
+        });
+
+
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
@@ -207,23 +283,7 @@ public class DayFragment extends Fragment {
             }
         });
 
-        bottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
-            @Override
-            public void onStateChanged(@NonNull View bottomSheet, int newState) {
-                if (newState == BottomSheetBehavior.STATE_EXPANDED) {
-                    bottomSheet.setClickable(false);
-                    bottomSheet.setClipToOutline(false);
-                } else if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
-                    bottomSheet.setClickable(true);
-                    bottomSheet.setClipToOutline(true);
-                }
-            }
 
-            @Override
-            public void onSlide(@NonNull View bottomSheet, float slideOffset) {
-
-            }
-        });
 
 
         SnowView snowView = view.findViewById(R.id.snowView);
@@ -256,4 +316,6 @@ public class DayFragment extends Fragment {
 
         return view;
     }
+
+
 }
