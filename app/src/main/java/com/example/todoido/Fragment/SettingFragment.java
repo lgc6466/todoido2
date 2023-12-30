@@ -19,11 +19,15 @@ import android.os.Handler;
 import android.text.InputType;
 import android.text.TextUtils;
 import android.util.Log;
+import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
@@ -32,19 +36,24 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.todoido.Adapter.CardAdapter;
+import com.example.todoido.FlowerView;
+import com.example.todoido.LeaveView;
 import com.example.todoido.LoginActivity;
 import com.example.todoido.MainActivity;
 import com.example.todoido.R;
+import com.example.todoido.RainView;
 import com.example.todoido.SnowView;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -63,7 +72,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class SettingFragment extends Fragment {
 
@@ -318,7 +329,6 @@ public class SettingFragment extends Fragment {
         });
 
 
-
         // 회원 탈퇴
         Button deleteButton = view.findViewById(R.id.delet_btn);
         deleteButton.setPaintFlags(deleteButton.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
@@ -455,7 +465,7 @@ public class SettingFragment extends Fragment {
 
                         // Firebase에 테마 저장
                         FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-                        if(firebaseUser != null){
+                        if (firebaseUser != null) {
                             DatabaseReference databaseRef = FirebaseDatabase.getInstance().getReference("Users").child(firebaseUser.getUid());
                             databaseRef.child("theme").setValue(selectedTheme)
                                     .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -476,7 +486,8 @@ public class SettingFragment extends Fragment {
                                                         getActivity().finish();
                                                     }
                                                 }
-                                            }, 2000);;
+                                            }, 2000);
+                                            ;
                                         }
                                     })
 
@@ -504,50 +515,158 @@ public class SettingFragment extends Fragment {
             }
         });
 
-        // 눈 내리는 효과
-        ToggleButton toggleButton = view.findViewById(R.id.toggleButton1);
+        // 효과
+        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("seasonEffect");
+
+        Spinner spinner = view.findViewById(R.id.spinner1);
+        spinner.setPadding(35, 0, 0, 0);
+        // Spinner에 표시될 아이템 리스트 생성
+        List<String> items = new ArrayList<>();
+        items.add("선택 안함");
+        items.add("봄");
+        items.add("여름");
+        items.add("가을");
+        items.add("겨울");
+
+        FlowerView flowerView = view.findViewById(R.id.flowerView);
+        RainView rainView = view.findViewById(R.id.rainView);
+        LeaveView leaveView = view.findViewById(R.id.leaveView);
         SnowView snowView = view.findViewById(R.id.snowView);
 
-        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        if (currentUser != null) {
-            FirebaseDatabase database = FirebaseDatabase.getInstance();
-            DatabaseReference userRef = database.getReference("snow").child(currentUser.getUid());
+        if (getActivity() != null) {
+            ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), R.layout.spinner_item, items) {
+                @Override
+                public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+                    View view = super.getView(position, convertView, parent);
+                    TextView textView = (TextView) view.findViewById(android.R.id.text1);
+                    textView.setTextColor(ContextCompat.getColor(getContext(), R.color.selected_tab_text_color));
+                    textView.setTextSize(15);
+                    return view;
+                }
 
-            // Read the toggle state from the database
-            userRef.child("snowEffectEnabled").addValueEventListener(new ValueEventListener() {
+                @Override
+                public View getDropDownView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+                    View view = super.getDropDownView(position, convertView, parent);
+                    TextView textView = (TextView) view.findViewById(android.R.id.text1);
+                    textView.setTextColor(ContextCompat.getColor(getContext(), R.color.black));
+                    textView.setTextSize(16);
+
+                    // 드롭다운 아이템의 높이를 원하는 대로 조절합니다. 여기서는 50dp를 예로 들었습니다.
+                    int height = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 30,
+                            getResources().getDisplayMetrics());
+                    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                            LinearLayout.LayoutParams.MATCH_PARENT, height);
+                    textView.setLayoutParams(params);
+
+                    return view;
+                }
+            };
+            spinner.setAdapter(adapter);
+
+            spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    String selectedItem = parent.getItemAtPosition(position).toString();
+
+                    // 선택된 아이템에 따라 다른 효과를 보여줌
+                    String seasonEffect = "";
+                    switch (selectedItem) {
+                        case "봄":
+                            // 봄 효과
+                            flowerView.setVisibility(View.VISIBLE);
+                            rainView.setVisibility(View.INVISIBLE);
+                            leaveView.setVisibility(View.INVISIBLE);
+                            snowView.setVisibility(View.INVISIBLE);
+                            seasonEffect = "spring";
+                            break;
+                        case "여름":
+                            // 여름 효과
+                            flowerView.setVisibility(View.INVISIBLE);
+                            rainView.setVisibility(View.VISIBLE);
+                            leaveView.setVisibility(View.INVISIBLE);
+                            snowView.setVisibility(View.INVISIBLE);
+                            seasonEffect = "summer";
+                            break;
+                        case "가을":
+                            // 가을 효과
+                            flowerView.setVisibility(View.INVISIBLE);
+                            rainView.setVisibility(View.INVISIBLE);
+                            leaveView.setVisibility(View.VISIBLE);
+                            snowView.setVisibility(View.INVISIBLE);
+                            seasonEffect = "fall";
+                            break;
+                        case "겨울":
+                            // 겨울 효과
+                            flowerView.setVisibility(View.INVISIBLE);
+                            rainView.setVisibility(View.INVISIBLE);
+                            leaveView.setVisibility(View.INVISIBLE);
+                            snowView.setVisibility(View.VISIBLE);
+                            seasonEffect = "winter";
+                            break;
+                        case "선택 안함":
+                        default:
+                            // 아무 효과도 없음
+                            flowerView.setVisibility(View.INVISIBLE);
+                            rainView.setVisibility(View.INVISIBLE);
+                            leaveView.setVisibility(View.INVISIBLE);
+                            snowView.setVisibility(View.INVISIBLE);
+                            seasonEffect = "none";
+                            break;
+
+                    }
+                    // 선택된 효과를 Firebase에 저장
+                    userRef.child("seasonEffect").setValue(seasonEffect);
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+                    // 아무것도 선택되지 않았을 때 동작, 'none'을 파이어베이스에 저장
+                    userRef.child("seasonEffect").setValue("none");
+
+                    // 모든 효과를 끔
+                    flowerView.setVisibility(View.INVISIBLE);
+                    rainView.setVisibility(View.INVISIBLE);
+                    leaveView.setVisibility(View.INVISIBLE);
+                    snowView.setVisibility(View.INVISIBLE);
+                }
+            });
+
+            // 데이터베이스에서 시즌 이펙트를 불러옵니다.
+            userRef.child("seasonEffect").addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    Boolean snowEffectEnabled = dataSnapshot.getValue(Boolean.class);
-                    if (snowEffectEnabled != null) {
-                        // Set the toggle button state
-                        toggleButton.setChecked(snowEffectEnabled);
-
-                        // Set the SnowView visibility
-                        snowView.setVisibility(snowEffectEnabled ? View.VISIBLE : View.INVISIBLE);
+                    String seasonEffect = dataSnapshot.getValue(String.class);
+                    if (seasonEffect != null) {
+                        switch (seasonEffect) {
+                            case "spring":
+                                spinner.setSelection(1);
+                                break;
+                            case "summer":
+                                spinner.setSelection(2);
+                                break;
+                            case "fall":
+                                spinner.setSelection(3);
+                                break;
+                            case "winter":
+                                spinner.setSelection(4);
+                                break;
+                            case "none":
+                            default:
+                                spinner.setSelection(0);
+                                break;
+                        }
+                    } else {
+                        spinner.setSelection(0);
                     }
                 }
 
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
-                    // Failed to read value
-                    Log.w(TAG, "Failed to read value.", databaseError.toException());
-                }
-            });
-
-            // Set the on check change listener for the toggle button
-            toggleButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    // Set the SnowView visibility
-                    snowView.setVisibility(isChecked ? View.VISIBLE : View.INVISIBLE);
-
-                    // Save the toggle state
-                    userRef.child("snowEffectEnabled").setValue(isChecked);
+                    // 데이터를 불러오는데 실패했을 경우 동작
                 }
             });
         }
 
-        return view;
-    }
-
+            return view;
+        }
 }
