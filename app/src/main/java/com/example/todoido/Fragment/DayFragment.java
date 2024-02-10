@@ -28,6 +28,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.todoido.Adapter.DayTaskAdapter;
+import com.example.todoido.AlarmReceiver;
 import com.example.todoido.R;
 import com.example.todoido.AnimeView.SnowView;
 import com.example.todoido.ViewModel.DayTask;
