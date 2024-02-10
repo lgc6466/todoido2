@@ -19,7 +19,7 @@
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:windowSoftInputMode="adjustPan" ></activity>
+            android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".AnimeView.SnowingActivity"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
