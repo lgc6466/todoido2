@@ -126,6 +126,10 @@ public class DayTaskAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             }
         });
     }
+
+    public DayTask getTaskAt(int position) {
+        return taskList.get(position);
+    }
     static class ItemViewHolder extends RecyclerView.ViewHolder {
         TextView startTime, endTime, contentText;
         ImageButton closeButton;

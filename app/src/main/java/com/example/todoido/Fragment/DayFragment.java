@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CalendarView;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -42,7 +43,9 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 public class DayFragment extends Fragment {
     private BottomSheetBehavior bottomSheetBehavior;
@@ -51,6 +54,8 @@ public class DayFragment extends Fragment {
     private BottomSheetBehavior bottomSheetBehaviorCalendar;  // Add this line
     private FrameLayout blackBackground;
     private Spinner spinner;
+    private DayViewModel dayViewModel;
+    private RecyclerView recyclerView;
     private boolean isSheetVisible = false;
     FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
     private final DatabaseReference databaseRef = firebaseUser != null ? FirebaseDatabase.getInstance().getReference("Users").child(firebaseUser.getUid()).child("day") : null;
@@ -74,6 +79,12 @@ public class DayFragment extends Fragment {
         EditText day_txt = view.findViewById(R.id.day_txt);
         blackBackground = view.findViewById(R.id.blackBackground);
         CheckBox smartNotification = view.findViewById(R.id.smart_notification);
+        // ViewModel 초기화
+        dayViewModel = new ViewModelProvider(this).get(DayViewModel.class);
+
+        // RecyclerView 초기화
+        recyclerView = view.findViewById(R.id.dayRecyclerView);
+
 
         spinner = view.findViewById(R.id.spinner);
 
@@ -209,6 +220,18 @@ public class DayFragment extends Fragment {
             }
         });
 
+        CalendarView calendarView = view.findViewById(R.id.calendarView);
+
+// 날짜 선택 리스너 설정
+        calendarView.setOnDateChangeListener((calendar, year, month, dayOfMonth) -> {
+            Calendar selection = Calendar.getInstance();
+            selection.set(year, month, dayOfMonth);
+            scrollToSelectedDate(selection);
+        });
+
+
+
+
         bottomSheetBehaviorCalendar.addBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
             @Override
             public void onStateChanged(@NonNull View bottomSheet, int newState) {
@@ -240,6 +263,8 @@ public class DayFragment extends Fragment {
             adapter.notifyDataSetChanged();
         });
 
+
+
         Button submitButton = view.findViewById(R.id.submit_btn);
         submitButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -257,9 +282,15 @@ public class DayFragment extends Fragment {
                     return;
                 }
 
-                // 현재 날짜 정보를 가져오기
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy년 MM월 dd일");
-                String currentDate = sdf.format(new Date());
+                String currentDate;
+                if (selectedTaskPosition != -1) {
+                    // 수정하는 경우에는 원래의 날짜를 사용
+                    currentDate = adapter.getTaskList().get(selectedTaskPosition).getDate();
+                } else {
+                    // 새로운 일정을 추가하는 경우에는 현재 날짜를 사용
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy년 MM월 dd일");
+                    currentDate = sdf.format(new Date());
+                }
 
                 DayTask task = new DayTask(currentDate, startTime, endTime, text, spinnerSelection, isChecked);
 
@@ -315,6 +346,21 @@ public class DayFragment extends Fragment {
         }
 
         return view;
+    }
+
+    private void scrollToSelectedDate(Calendar selection) {
+        // 선택된 날짜를 'yyyy년 MM월 dd일' 형식의 문자열로 변환
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy년 MM월 dd일", Locale.KOREA);
+        String selectedDateString = dateFormat.format(selection.getTime());
+
+        // DayViewModel로부터 가져온 데이터를 이용하여 해당 날짜의 아이템으로 리사이클러뷰를 스크롤
+        for (int i = 0; i < dayViewModel.getTaskList().getValue().size(); i++) {
+            DayTask task = dayViewModel.getTaskList().getValue().get(i);
+            if (task.getDate().equals(selectedDateString)) {
+                ((LinearLayoutManager)recyclerView.getLayoutManager()).scrollToPositionWithOffset(i, 0);
+                break;
+            }
+        }
     }
 
 

@@ -93,13 +93,17 @@ public class DayViewModel extends ViewModel {
             databaseRef.child(id).setValue(task);
 
             List<DayTask> currentList = taskList.getValue();
-            for (int i = 0; i < currentList.size(); i++) {
-                if (currentList.get(i).getId().equals(id)) {
-                    currentList.set(i, task);
-                    break;
+            if(currentList != null) {
+                for (int i = 0; i < currentList.size(); i++) {
+                    DayTask currentTask = currentList.get(i);
+                    if (currentTask != null && currentTask.getId() != null && currentTask.getId().equals(id)) {
+                        currentList.set(i, task);
+                        break;
+                    }
                 }
+                taskList.setValue(currentList);
             }
-            taskList.setValue(currentList);
         }
     }
+
 }
