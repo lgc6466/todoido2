@@ -2,6 +2,10 @@ package com.example.todoido.Fragment;
 
 import static android.content.ContentValues.TAG;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -68,6 +72,10 @@ public class DayFragment extends Fragment {
         blackBackground.setVisibility(View.GONE);
     }
 
+    // 알림
+    private AlarmManager alarmManager;
+    private PendingIntent pendingIntent;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_day, container, false);
@@ -92,6 +100,66 @@ public class DayFragment extends Fragment {
         ArrayAdapter<String> spinnerAdapter;
         spinnerAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_dropdown_item, items);
         spinner.setAdapter(spinnerAdapter);
+
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String item = (String) parent.getItemAtPosition(position);
+
+                Calendar calendar = Calendar.getInstance();
+                int hour = calendar.get(Calendar.HOUR_OF_DAY);
+                int minute = calendar.get(Calendar.MINUTE);
+
+                switch(item) {
+                    case "5분 전":
+                        calendar.add(Calendar.MINUTE, -5);
+                        break;
+                    case "10분 전":
+                        calendar.add(Calendar.MINUTE, -10);
+                        break;
+                    case "30분 전":
+                        calendar.add(Calendar.MINUTE, -30);
+                        break;
+                    case "1시간 전":
+                        calendar.add(Calendar.HOUR_OF_DAY, -1);
+                        break;
+                    case "3시간 전":
+                        calendar.add(Calendar.HOUR_OF_DAY, -3);
+                        break;
+                    default:
+                        // "선택 안 함"의 경우 알림을 취소
+                        if(alarmManager != null && pendingIntent != null) {
+                            alarmManager.cancel(pendingIntent);
+                        }
+                        return;
+                }
+
+                // 현재 시간보다 알람 시간이 이전이라면 다음날로 설정
+                if(calendar.before(Calendar.getInstance())) {
+                    calendar.add(Calendar.DATE, 1);
+                }
+
+                // 알람 설정
+                if (alarmManager == null) {
+                    alarmManager = (AlarmManager) getActivity().getSystemService(Context.ALARM_SERVICE);
+                }
+                Intent intent = new Intent(getActivity(), AlarmReceiver.class);
+                intent.putExtra("channel_name", "spinnerSelection");
+                intent.putExtra("channel_description", "text");
+
+                // System.currentTimeMillis()를 사용하여 요청 코드 생성
+                int requestCode = (int) (System.currentTimeMillis() % Integer.MAX_VALUE);
+
+                PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity(), requestCode, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+                alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                // 아무것도 선택되지 않은 경우 처리
+            }
+        });
 
         Button timePickerButton = view.findViewById(R.id.timePickerButton);
         Button timePickerButton2 = view.findViewById(R.id.timePickerButton2);
