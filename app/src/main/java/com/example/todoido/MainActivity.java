@@ -152,86 +152,86 @@ public class MainActivity extends AppCompatActivity {
             setContentView(R.layout.activity_main);
 
         }
+    }
 
-        private void createNotificationChannel() {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                CharSequence name = "channel_name";
-                String description = "channel_description";
-                int importance = NotificationManager.IMPORTANCE_DEFAULT;
-                NotificationChannel channel = new NotificationChannel("channel_id", name, importance);
-                channel.setDescription(description);
+    private void createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = "channel_name";
+            String description = "channel_description";
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel("channel_id", name, importance);
+            channel.setDescription(description);
 
-                // Register the channel with the system
-                NotificationManager notificationManager = getSystemService(NotificationManager.class);
-                notificationManager.createNotificationChannel(channel);
-            }
+            // Register the channel with the system
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
         }
+    }
 
-        private boolean areNotificationsEnabled() {
-            NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
-            return notificationManager.areNotificationsEnabled();
-        }
+    private boolean areNotificationsEnabled() {
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+        return notificationManager.areNotificationsEnabled();
+    }
 
-        private AtomicInteger notificationId = new AtomicInteger(0);
+    private AtomicInteger notificationId = new AtomicInteger(0);
 
-        private int getUniqueNotificationId() {
-            return notificationId.incrementAndGet();
-        }
+    private int getUniqueNotificationId() {
+        return notificationId.incrementAndGet();
+    }
 
-        @SuppressLint("MissingPermission")
-        private void sendNotification(String startTime, String text) {
-            // 알림 클릭 시 실행할 인텐트 생성
-            Intent intent = new Intent(this, MainActivity.class);  // YourActivity는 알림을 클릭하면 열리는 액티비티입니다.
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE);
+    @SuppressLint("MissingPermission")
+    private void sendNotification(String startTime, String text) {
+        // 알림 클릭 시 실행할 인텐트 생성
+        Intent intent = new Intent(this, MainActivity.class);  // YourActivity는 알림을 클릭하면 열리는 액티비티입니다.
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE);
 
-            // 알림 설정
-            NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "channel_id")
-                    .setSmallIcon(R.drawable.logo)  // 알림 아이콘 설정
-                    .setContentTitle(startTime + "에 일정이 있어요!")  // 알림 제목 설정
-                    .setContentText(text)  // 알림 내용 설정
-                    .setPriority(NotificationCompat.PRIORITY_DEFAULT)  // 알림 우선순위 설정
-                    .setContentIntent(pendingIntent)  // 알림 클릭 시 실행할 인텐트 설정
-                    .setAutoCancel(true);  // 알림 클릭 시 자동으로 알림 제거
+        // 알림 설정
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "channel_id")
+                .setSmallIcon(R.drawable.logo)  // 알림 아이콘 설정
+                .setContentTitle(startTime + "에 일정이 있어요!")  // 알림 제목 설정
+                .setContentText(text)  // 알림 내용 설정
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)  // 알림 우선순위 설정
+                .setContentIntent(pendingIntent)  // 알림 클릭 시 실행할 인텐트 설정
+                .setAutoCancel(true);  // 알림 클릭 시 자동으로 알림 제거
 
-            NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
 
-            // notificationId는 알림을 업데이트하거나 취소할 때 사용합니다.
-            int notificationId = getUniqueNotificationId();
-            notificationManager.notify(notificationId, builder.build());
-        }
+        // notificationId는 알림을 업데이트하거나 취소할 때 사용합니다.
+        int notificationId = getUniqueNotificationId();
+        notificationManager.notify(notificationId, builder.build());
+    }
 
-        private void doSomething() {
-            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-            if (user != null) {
-                // 현재 로그인한 사용자의 ID를 가져옵니다.
-                String userId = user.getUid();
+    private void doSomething() {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            // 현재 로그인한 사용자의 ID를 가져옵니다.
+            String userId = user.getUid();
 
-                // Firebase Realtime Database에서 데이터 로드
-                DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
-                ref.child("Users").child(userId).child("day").addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        // 각 'day'의 모든 자식 노드를 순회
-                        for (DataSnapshot daySnapshot : dataSnapshot.getChildren()) {
-                            // 데이터 로드 성공
-                            String startTime = daySnapshot.child("startTime").getValue(String.class);
-                            String text = daySnapshot.child("text").getValue(String.class);
+            // Firebase Realtime Database에서 데이터 로드
+            DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
+            ref.child("Users").child(userId).child("day").addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    // 각 'day'의 모든 자식 노드를 순회
+                    for (DataSnapshot daySnapshot : dataSnapshot.getChildren()) {
+                        // 데이터 로드 성공
+                        String startTime = daySnapshot.child("startTime").getValue(String.class);
+                        String text = daySnapshot.child("text").getValue(String.class);
 
-                            // 알림 전송
-                            if (startTime != null && text != null) {
-                                sendNotification(startTime, text);
-                            }
+                        // 알림 전송
+                        if (startTime != null && text != null) {
+                            sendNotification(startTime, text);
                         }
                     }
+                }
 
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                        // 데이터 로드 실패
-                        Log.w(TAG, "loadData:onCancelled", databaseError.toException());
-                    }
-                });
-            }
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    // 데이터 로드 실패
+                    Log.w(TAG, "loadData:onCancelled", databaseError.toException());
+                }
+            });
         }
     }
 }
