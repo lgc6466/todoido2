@@ -1,4 +1,4 @@
-package com.example.todoido;
+package com.example.todoido.AnimeView;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -8,22 +8,24 @@ import android.view.View;
 
 import androidx.core.content.ContextCompat;
 
-public class SnowView extends View {
+import com.example.todoido.R;
+
+public class LeaveView extends View {
 
     private static final int NUM_SNOWFLAKES = 100;
     private static final long DELAY = 5L;
 
     private SnowFlake[] snowflakes = new SnowFlake[NUM_SNOWFLAKES];
 
-    public SnowView(Context context) {
+    public LeaveView(Context context) {
         super(context);
     }
 
-    public SnowView(Context context, AttributeSet attrs) {
+    public LeaveView(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public SnowView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public LeaveView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
 

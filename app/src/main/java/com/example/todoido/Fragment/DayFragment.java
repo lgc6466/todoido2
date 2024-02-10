@@ -18,7 +18,6 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -26,7 +25,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.todoido.Adapter.DayTaskAdapter;
 import com.example.todoido.R;
-import com.example.todoido.SnowView;
+import com.example.todoido.AnimeView.SnowView;
 import com.example.todoido.ViewModel.DayTask;
 import com.example.todoido.ViewModel.DayViewModel;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
