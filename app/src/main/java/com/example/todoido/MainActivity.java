@@ -210,49 +210,30 @@ public class MainActivity extends AppCompatActivity {
     private void doSomething() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
+            // 현재 로그인한 사용자의 ID를 가져옵니다.
             String userId = user.getUid();
 
+            // Firebase Realtime Database에서 데이터 로드
             DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
             ref.child("Users").child(userId).child("day").addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    // 현재 시간
-                    long now = System.currentTimeMillis();
-                    Date nowDate = new Date(now);
-
+                    // 각 'day'의 모든 자식 노드를 순회
                     for (DataSnapshot daySnapshot : dataSnapshot.getChildren()) {
+                        // 데이터 로드 성공
                         String startTime = daySnapshot.child("startTime").getValue(String.class);
                         String text = daySnapshot.child("text").getValue(String.class);
 
-                        // 일정의 시간을 파싱합니다. 이 코드는 startTime이 "HH:mm" 형식이라고 가정합니다.
-                        try {
-                            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.KOREA);
-                            Date startDate = sdf.parse(startTime);
-
-                            // 현재 날짜 정보를 가져와 startTime에 추가합니다.
-                            Calendar startCal = Calendar.getInstance();
-                            startCal.setTime(startDate);
-                            startCal.set(Calendar.YEAR, nowDate.getYear());
-                            startCal.set(Calendar.MONTH, nowDate.getMonth());
-                            startCal.set(Calendar.DATE, nowDate.getDate());
-
-                            long eventTime = startCal.getTimeInMillis();
-
-                            // 현재 시간과 일정의 시간을 비교합니다.
-                            if (now < eventTime) {
-                                // 일정의 시간이 현재 시간보다 미래라면 알림을 보냅니다.
-                                if (text != null) {
-                                    sendNotification(startTime, text);
-                                }
-                            }
-                        } catch (ParseException e) {
-                            e.printStackTrace();
+                        // 알림 전송
+                        if (startTime != null && text != null) {
+                            sendNotification(startTime, text);
                         }
                     }
                 }
 
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
+                    // 데이터 로드 실패
                     Log.w(TAG, "loadData:onCancelled", databaseError.toException());
                 }
             });
