@@ -5,6 +5,7 @@ import static androidx.constraintlayout.helper.widget.MotionEffect.TAG;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -510,157 +511,125 @@ public class SettingFragment extends Fragment {
         });
 
         // 효과
-        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("seasonEffect");
+        FirebaseAuth auth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = auth.getCurrentUser();
 
-        Spinner spinner = view.findViewById(R.id.spinner1);
-        spinner.setPadding(35, 0, 0, 0);
-        // Spinner에 표시될 아이템 리스트 생성
-        List<String> items = new ArrayList<>();
-        items.add("선택 안함");
-        items.add("봄");
-        items.add("여름");
-        items.add("가을");
-        items.add("겨울");
+        if (currentUser != null) {
+            String userId = currentUser.getUid();
+            DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("Users").child(userId);
 
-        FlowerView flowerView = view.findViewById(R.id.flowerView);
-        RainView rainView = view.findViewById(R.id.rainView);
-        LeaveView leaveView = view.findViewById(R.id.leaveView);
-        SnowView snowView = view.findViewById(R.id.snowView);
+            Spinner spinner = view.findViewById(R.id.spinner1);
+            spinner.setPadding(35, 0, 0, 0);
+            // Spinner에 표시될 아이템 리스트 생성
+            List<String> items = new ArrayList<>();
+            items.add("선택 안함");
+            items.add("봄");
+            items.add("여름");
+            items.add("가을");
+            items.add("겨울");
 
-        if (getActivity() != null) {
-            ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), R.layout.spinner_item, items) {
-                @Override
-                public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-                    View view = super.getView(position, convertView, parent);
-                    TextView textView = (TextView) view.findViewById(android.R.id.text1);
-                    textView.setTextColor(ContextCompat.getColor(getContext(), R.color.selected_tab_text_color));
-                    textView.setTextSize(15);
-                    return view;
-                }
+            FlowerView flowerView = view.findViewById(R.id.flowerView);
+            RainView rainView = view.findViewById(R.id.rainView);
+            LeaveView leaveView = view.findViewById(R.id.leaveView);
+            SnowView snowView = view.findViewById(R.id.snowView);
 
-                @Override
-                public View getDropDownView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-                    View view = super.getDropDownView(position, convertView, parent);
-                    TextView textView = (TextView) view.findViewById(android.R.id.text1);
-                    textView.setTextColor(ContextCompat.getColor(getContext(), R.color.black));
-                    textView.setTextSize(16);
-
-                    // 드롭다운 아이템의 높이를 원하는 대로 조절합니다. 여기서는 50dp를 예로 들었습니다.
-                    int height = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 30,
-                            getResources().getDisplayMetrics());
-                    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                            LinearLayout.LayoutParams.MATCH_PARENT, height);
-                    textView.setLayoutParams(params);
-
-                    return view;
-                }
-            };
-            spinner.setAdapter(adapter);
-
-            spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                @Override
-                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    String selectedItem = parent.getItemAtPosition(position).toString();
-
-                    // 선택된 아이템에 따라 다른 효과를 보여줌
-                    String seasonEffect = "";
-                    switch (selectedItem) {
-                        case "봄":
-                            // 봄 효과
-                            flowerView.setVisibility(View.VISIBLE);
-                            rainView.setVisibility(View.INVISIBLE);
-                            leaveView.setVisibility(View.INVISIBLE);
-                            snowView.setVisibility(View.INVISIBLE);
-                            seasonEffect = "spring";
-                            break;
-                        case "여름":
-                            // 여름 효과
-                            flowerView.setVisibility(View.INVISIBLE);
-                            rainView.setVisibility(View.VISIBLE);
-                            leaveView.setVisibility(View.INVISIBLE);
-                            snowView.setVisibility(View.INVISIBLE);
-                            seasonEffect = "summer";
-                            break;
-                        case "가을":
-                            // 가을 효과
-                            flowerView.setVisibility(View.INVISIBLE);
-                            rainView.setVisibility(View.INVISIBLE);
-                            leaveView.setVisibility(View.VISIBLE);
-                            snowView.setVisibility(View.INVISIBLE);
-                            seasonEffect = "fall";
-                            break;
-                        case "겨울":
-                            // 겨울 효과
-                            flowerView.setVisibility(View.INVISIBLE);
-                            rainView.setVisibility(View.INVISIBLE);
-                            leaveView.setVisibility(View.INVISIBLE);
-                            snowView.setVisibility(View.VISIBLE);
-                            seasonEffect = "winter";
-                            break;
-                        case "선택 안함":
-                        default:
-                            // 아무 효과도 없음
-                            flowerView.setVisibility(View.INVISIBLE);
-                            rainView.setVisibility(View.INVISIBLE);
-                            leaveView.setVisibility(View.INVISIBLE);
-                            snowView.setVisibility(View.INVISIBLE);
-                            seasonEffect = "none";
-                            break;
-
+            if (getActivity() != null) {
+                ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), R.layout.spinner_item, items) {
+                    @Override
+                    public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+                        View view = super.getView(position, convertView, parent);
+                        TextView textView = (TextView) view.findViewById(android.R.id.text1);
+                        textView.setTextColor(ContextCompat.getColor(getContext(), R.color.selected_tab_text_color));
+                        textView.setTextSize(15);
+                        return view;
                     }
-                    // 선택된 효과를 Firebase에 저장
-                    userRef.child("seasonEffect").setValue(seasonEffect);
-                }
 
-                @Override
-                public void onNothingSelected(AdapterView<?> parent) {
-                    // 아무것도 선택되지 않았을 때 동작, 'none'을 파이어베이스에 저장
-                    userRef.child("seasonEffect").setValue("none");
+                    @Override
+                    public View getDropDownView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+                        View view = super.getDropDownView(position, convertView, parent);
+                        TextView textView = (TextView) view.findViewById(android.R.id.text1);
+                        textView.setTextColor(ContextCompat.getColor(getContext(), R.color.black));
+                        textView.setTextSize(16);
 
-                    // 모든 효과를 끔
-                    flowerView.setVisibility(View.INVISIBLE);
-                    rainView.setVisibility(View.INVISIBLE);
-                    leaveView.setVisibility(View.INVISIBLE);
-                    snowView.setVisibility(View.INVISIBLE);
-                }
-            });
+                        // 드롭다운 아이템의 높이를 원하는 대로 조절합니다. 여기서는 50dp를 예로 들었습니다.
+                        int height = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 30,
+                                getResources().getDisplayMetrics());
+                        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                                LinearLayout.LayoutParams.MATCH_PARENT, height);
+                        textView.setLayoutParams(params);
 
-            // 데이터베이스에서 시즌 이펙트를 불러옵니다.
-            userRef.child("seasonEffect").addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    String seasonEffect = dataSnapshot.getValue(String.class);
-                    if (seasonEffect != null) {
-                        switch (seasonEffect) {
-                            case "spring":
-                                spinner.setSelection(1);
+                        return view;
+                    }
+                };
+                spinner.setAdapter(adapter);
+
+                spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                        String selectedEffect = items.get(position);
+
+                        // 선택된 효과를 데이터베이스에 저장
+                        userRef.child("seasonEffect").setValue(selectedEffect);
+
+                        // Hide all views initially
+                        flowerView.setVisibility(View.INVISIBLE);
+                        rainView.setVisibility(View.INVISIBLE);
+                        leaveView.setVisibility(View.INVISIBLE);
+                        snowView.setVisibility(View.INVISIBLE);
+
+                        // Show the selected view
+                        switch (selectedEffect) {
+                            case "봄":
+                                flowerView.setVisibility(View.VISIBLE);
                                 break;
-                            case "summer":
-                                spinner.setSelection(2);
+                            case "여름":
+                                rainView.setVisibility(View.VISIBLE);
                                 break;
-                            case "fall":
-                                spinner.setSelection(3);
+                            case "가을":
+                                leaveView.setVisibility(View.VISIBLE);
                                 break;
-                            case "winter":
-                                spinner.setSelection(4);
+                            case "겨울":
+                                snowView.setVisibility(View.VISIBLE);
                                 break;
-                            case "none":
                             default:
-                                spinner.setSelection(0);
+                                // No effect is selected
                                 break;
                         }
-                    } else {
-                        spinner.setSelection(0);
                     }
-                }
 
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-                    // 데이터를 불러오는데 실패했을 경우 동작
-                }
-            });
+                    @Override
+                    public void onNothingSelected(AdapterView<?> parent) {
+                        // 아무 것도 선택되지 않았을 때의 처리
+                        flowerView.setVisibility(View.INVISIBLE);
+                        rainView.setVisibility(View.INVISIBLE);
+                        leaveView.setVisibility(View.INVISIBLE);
+                        snowView.setVisibility(View.INVISIBLE);
+                    }
+                });
+
+                // Read the selected effect from the database
+                userRef.child("seasonEffect").addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        String seasonEffect = dataSnapshot.getValue(String.class);
+                        if (seasonEffect == null) {
+                            seasonEffect = "선택 안함";  // Use 'none' as the default value
+                        }
+
+                        // Set the spinner selection to the previously selected effect
+                        int spinnerPosition = adapter.getPosition(seasonEffect);
+                        spinner.setSelection(spinnerPosition);
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        // Failed to read value
+                        Log.w(ContentValues.TAG, "Failed to read value.", databaseError.toException());
+                    }
+                });
+            }
         }
 
-            return view;
-        }
+        return view;
+    }
 }

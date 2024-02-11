@@ -32,6 +32,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.todoido.Adapter.DayTaskAdapter;
 import com.example.todoido.AlarmReceiver;
+import com.example.todoido.AnimeView.FlowerView;
+import com.example.todoido.AnimeView.LeaveView;
+import com.example.todoido.AnimeView.RainView;
 import com.example.todoido.R;
 import com.example.todoido.AnimeView.SnowView;
 import com.example.todoido.ViewModel.DayTask;
@@ -418,25 +421,49 @@ public class DayFragment extends Fragment {
         });
 
 
-
-
-        SnowView snowView = view.findViewById(R.id.snowView);
+        // 효과
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        FlowerView flowerView = view.findViewById(R.id.flowerView);
+        RainView rainView = view.findViewById(R.id.rainView);
+        LeaveView leaveView = view.findViewById(R.id.leaveView);
+        SnowView snowView = view.findViewById(R.id.snowView);
+
         if (currentUser != null) {
             FirebaseDatabase database = FirebaseDatabase.getInstance();
-            DatabaseReference userRef = database.getReference("snow").child(currentUser.getUid());
+            DatabaseReference userRef = database.getReference("Users").child(currentUser.getUid());
 
-            // Read the toggle state from the database
-            userRef.child("snowEffectEnabled").addValueEventListener(new ValueEventListener() {
+            // Read the selected effect from the database
+            userRef.child("seasonEffect").addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    Boolean snowEffectEnabled = dataSnapshot.getValue(Boolean.class);
-                    if (snowEffectEnabled != null && snowEffectEnabled) {
-                        // The toggle is enabled, so show the SnowView
-                        snowView.setVisibility(View.VISIBLE);
-                    } else {
-                        // The toggle is disabled or not set, so hide the SnowView
-                        snowView.setVisibility(View.INVISIBLE);
+                    String seasonEffect = dataSnapshot.getValue(String.class);
+                    if (seasonEffect == null) {
+                        seasonEffect = "선택 안함";  // Use 'none' as the default value
+                    }
+
+                    // Hide all views initially
+                    flowerView.setVisibility(View.INVISIBLE);
+                    rainView.setVisibility(View.INVISIBLE);
+                    leaveView.setVisibility(View.INVISIBLE);
+                    snowView.setVisibility(View.INVISIBLE);
+
+                    // Show the selected view
+                    switch (seasonEffect) {
+                        case "봄":
+                            flowerView.setVisibility(View.VISIBLE);
+                            break;
+                        case "여름":
+                            rainView.setVisibility(View.VISIBLE);
+                            break;
+                        case "가을":
+                            leaveView.setVisibility(View.VISIBLE);
+                            break;
+                        case "겨울":
+                            snowView.setVisibility(View.VISIBLE);
+                            break;
+                        default:
+                            // No effect is selected
+                            break;
                     }
                 }
 
