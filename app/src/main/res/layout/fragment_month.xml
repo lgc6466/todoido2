@@ -8,10 +8,29 @@
     android:orientation="horizontal"
     tools:context=".Fragment.MonthFragment">
 
-    <com.example.todoido.AnimeView.SnowView
+    <com.example.todoido.AnimeView.FlowerView
+        android:id="@+id/flowerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/snowView" />
+        android:visibility="invisible" />
+
+    <com.example.todoido.AnimeView.RainView
+        android:id="@+id/rainView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="invisible" />
+
+    <com.example.todoido.AnimeView.LeaveView
+        android:id="@+id/leaveView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="invisible" />
+
+    <com.example.todoido.AnimeView.SnowView
+        android:id="@+id/snowView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="invisible" />
 
     <LinearLayout
         android:layout_width="match_parent"
