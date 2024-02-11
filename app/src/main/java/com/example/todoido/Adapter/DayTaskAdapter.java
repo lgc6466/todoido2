@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -95,6 +96,19 @@ public class DayTaskAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         holder.startTime.setText(task.getStartTime());
         holder.endTime.setText(task.getEndTime());
         holder.contentText.setText(task.getText());
+        holder.placeName.setText(task.getPlaceName());
+
+        String placeName = task.getPlaceName();
+        ImageView locationIcon = holder.itemView.findViewById(R.id.loc_ic);
+
+        if (placeName == null || placeName.isEmpty()) {
+            // 장소 이름이 없는 경우, ImageView를 숨김
+            locationIcon.setVisibility(View.GONE);
+        } else {
+            // 장소 이름이 있는 경우, ImageView를 보이게 함
+            locationIcon.setVisibility(View.VISIBLE);
+            holder.placeName.setText(placeName);
+        }
 
         if (listener != null) {
             holder.itemView.setOnClickListener(v -> listener.onItemClick(task));
@@ -116,7 +130,6 @@ public class DayTaskAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         DayTask header = taskList.get(position);
         String formattedDate = header.getDate(); // 날짜 정보 가져오기
         String dayOfWeek = DayTask.getDayOfWeek(formattedDate); // 요일 정보 가져오기
-
         String displayText = formattedDate + " " + dayOfWeek+ " >";
         holder.dateText.setText(displayText);
 
@@ -131,7 +144,7 @@ public class DayTaskAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         return taskList.get(position);
     }
     static class ItemViewHolder extends RecyclerView.ViewHolder {
-        TextView startTime, endTime, contentText;
+        TextView startTime, endTime, contentText,placeName;
         ImageButton closeButton;
         DayTaskAdapter adapter;
 
@@ -142,6 +155,7 @@ public class DayTaskAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             endTime = itemView.findViewById(R.id.endTime);
             contentText = itemView.findViewById(R.id.contentText);
             closeButton = itemView.findViewById(R.id.closeButton);
+            placeName = itemView.findViewById(R.id.locationname);
 
             itemView.setOnLongClickListener(v -> {
                 int position = getAdapterPosition();

@@ -14,6 +14,7 @@ public class DayTask {
     private String endTime;
     private String text;
     private String spinnerSelection;
+    private String placeName;
     private boolean isChecked;
     private boolean isHeader;
 
@@ -27,13 +28,14 @@ public class DayTask {
         this.isHeader = true; // 헤더를 생성하는 경우에만 true
     }
 
-    public DayTask(String date, String startTime, String endTime, String text, String spinnerSelection, boolean isChecked) {
+    public DayTask(String date, String startTime, String endTime, String text, String spinnerSelection, boolean isChecked, String placeName) {
         this(date); // 생성자 체이닝을 사용하여 중복 코드 제거
         this.startTime = startTime;
         this.endTime = endTime;
         this.text = text;
         this.spinnerSelection = spinnerSelection;
         this.isChecked = isChecked;
+        this.placeName = placeName; // 장소 이름 초기화
         this.isHeader = false;
     }
 
@@ -71,9 +73,12 @@ public class DayTask {
         return date;
     }
 
-    public void setDate(String date) {
-        this.date = date;
-        this.dayOfWeek = getDayOfWeek(date);
+    public String getPlaceName() {
+        return placeName;
+    }
+
+    public void setPlaceName(String placeName) {
+        this.placeName = placeName;
     }
 
     public boolean isHeader() {

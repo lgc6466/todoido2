@@ -130,26 +130,54 @@
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
+                android:orientation="vertical"
                 android:layout_marginTop="10dp"
                 android:layout_gravity="center">
-                
+
+
+
+                <LinearLayout
+                    android:id="@+id/map_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:orientation="horizontal"
+                    android:layout_gravity="center"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <ImageView
+                        android:layout_width="18dp"
+                        android:layout_height="22dp"
+                        android:src="@drawable/location_ic"
+                        android:layout_margin="5dp"
+                        android:layout_gravity="center"
+                        android:clickable="false"
+                        android:focusable="false"/>
+
+                    <TextView
+                        android:id="@+id/location_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:fontFamily="@font/nanumsquare_acb"
+                        android:text="장소 추가"
+                        android:textColor="@color/selected_tab_text_color"
+                        android:textSize="16dp"
+                        android:clickable="false"
+                        android:focusable="false"/>
+
+                </LinearLayout>
+
                 <CheckBox
                     android:id="@+id/smart_notification"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:buttonTint="@color/orange"/>
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="스마트 알림설정"
-                    android:textAlignment="center"
-                    android:textSize="16dp"
-                    android:padding="5dp"
+                    android:buttonTint="@color/orange"
+                    android:fontFamily="@font/nanumsquare_acb"
+                    android:text="기본 캘린더에 추가"
                     android:textColor="@color/selected_tab_text_color"
-                    android:fontFamily="@font/nanumsquare_acb"/>
-
+                    android:textSize="16dp"
+                    android:layout_gravity="center"/>
             </LinearLayout>
 
             <Button

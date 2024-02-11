@@ -1,5 +1,6 @@
 package com.example.todoido.Fragment;
 
+import static android.app.Activity.RESULT_OK;
 import static android.content.ContentValues.TAG;
 
 import android.app.AlarmManager;
@@ -18,7 +19,9 @@ import android.widget.CalendarView;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -33,6 +36,11 @@ import com.example.todoido.R;
 import com.example.todoido.AnimeView.SnowView;
 import com.example.todoido.ViewModel.DayTask;
 import com.example.todoido.ViewModel.DayViewModel;
+import com.google.android.gms.common.api.Status;
+import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.widget.Autocomplete;
+import com.google.android.libraries.places.widget.AutocompleteActivity;
+import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.timepicker.MaterialTimePicker;
@@ -47,8 +55,10 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 public class DayFragment extends Fragment {
@@ -72,6 +82,7 @@ public class DayFragment extends Fragment {
     private void removeBlackBackground() {
         blackBackground.setVisibility(View.GONE);
     }
+    private static final int AUTOCOMPLETE_REQUEST_CODE = 1;
 
     // 알림
     private AlarmManager alarmManager;
@@ -87,6 +98,9 @@ public class DayFragment extends Fragment {
         EditText day_txt = view.findViewById(R.id.day_txt);
         blackBackground = view.findViewById(R.id.blackBackground);
         CheckBox smartNotification = view.findViewById(R.id.smart_notification);
+        TextView locationName = view.findViewById(R.id.location_name);
+        LinearLayout mapBtn = view.findViewById(R.id.map_btn);
+
         // ViewModel 초기화
         dayViewModel = new ViewModelProvider(this).get(DayViewModel.class);
 
@@ -165,6 +179,17 @@ public class DayFragment extends Fragment {
         Button timePickerButton = view.findViewById(R.id.timePickerButton);
         Button timePickerButton2 = view.findViewById(R.id.timePickerButton2);
         MaterialButton addButton = view.findViewById(R.id.addButton);
+
+        mapBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // 장소 검색 인텐트 시작
+                List<Place.Field> fields = Arrays.asList(Place.Field.ID, Place.Field.NAME);
+                Intent intent = new Autocomplete.IntentBuilder(AutocompleteActivityMode.FULLSCREEN, fields)
+                        .build(getActivity());
+                startActivityForResult(intent, AUTOCOMPLETE_REQUEST_CODE);
+            }
+        });
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -182,6 +207,7 @@ public class DayFragment extends Fragment {
                         timePickerButton2.setText("종료 시간");
                         day_txt.setText("");
                         spinner.setSelection(0);
+                        locationName.setText("");
                         smartNotification.setChecked(false);
                     }
 
@@ -196,9 +222,13 @@ public class DayFragment extends Fragment {
                         public void onNothingSelected(AdapterView<?> parent) {
                         }
                     });
+
+
                 }
             }
         });
+
+
 
         View.OnClickListener timePickerClickListener = new View.OnClickListener() {
             @Override
@@ -242,6 +272,7 @@ public class DayFragment extends Fragment {
                 timePickerButton2.setText(task.getEndTime());
                 day_txt.setText(task.getText());
                 spinner.setSelection(((ArrayAdapter<String>)spinner.getAdapter()).getPosition(task.getSpinnerSelection()));
+                locationName.setText(task.getPlaceName());
                 smartNotification.setChecked(task.isChecked());
                 selectedTaskPosition = adapter.getTaskList().indexOf(task);
 
@@ -342,6 +373,8 @@ public class DayFragment extends Fragment {
                 String text = day_txt.getText().toString();
                 String spinnerSelection = spinner.getSelectedItem().toString();
                 boolean isChecked = smartNotification.isChecked();
+                TextView locationName = view.findViewById(R.id.location_name);
+                String placeName = locationName.getText().toString();
 
                 // 텍스트가 비어 있는지 확인
                 if (text.isEmpty()) {
@@ -356,11 +389,12 @@ public class DayFragment extends Fragment {
                     currentDate = adapter.getTaskList().get(selectedTaskPosition).getDate();
                 } else {
                     // 새로운 일정을 추가하는 경우에는 현재 날짜를 사용
-                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy년 MM월 dd일");
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy년 MM월 dd일", Locale.KOREA);
                     currentDate = sdf.format(new Date());
                 }
 
-                DayTask task = new DayTask(currentDate, startTime, endTime, text, spinnerSelection, isChecked);
+                // 장소 이름을 DayTask 객체에 설정
+                DayTask task = new DayTask(currentDate, startTime, endTime, text, spinnerSelection, isChecked, placeName);
 
                 if (selectedTaskPosition != -1) {
                     task.setId(adapter.getTaskList().get(selectedTaskPosition).getId());
@@ -379,6 +413,7 @@ public class DayFragment extends Fragment {
                 day_txt.setText("");
                 spinner.setSelection(0);
                 smartNotification.setChecked(false);
+                locationName.setText("");
             }
         });
 
@@ -427,6 +462,22 @@ public class DayFragment extends Fragment {
             if (task.getDate().equals(selectedDateString)) {
                 ((LinearLayoutManager)recyclerView.getLayoutManager()).scrollToPositionWithOffset(i, 0);
                 break;
+            }
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == AUTOCOMPLETE_REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+                Place place = Autocomplete.getPlaceFromIntent(data);
+                TextView locationName = getView().findViewById(R.id.location_name);
+                locationName.setText(place.getName());
+            } else if (resultCode == AutocompleteActivity.RESULT_ERROR) {
+                Status status = Autocomplete.getStatusFromIntent(data);
+                Log.i(TAG, status.getStatusMessage());
             }
         }
     }

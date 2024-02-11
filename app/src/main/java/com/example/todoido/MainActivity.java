@@ -22,6 +22,7 @@ import com.example.todoido.Fragment.MonthFragment;
 import com.example.todoido.Fragment.SettingFragment;
 import com.example.todoido.Fragment.WeekFragment;
 import com.example.todoido.Fragment.YearFragment;
+import com.google.android.libraries.places.api.Places;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -45,6 +46,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         createNotificationChannel();
+
+        Places.initialize(getApplicationContext(), "AIzaSyBWaBa98puwpI1ZtEdaXDAsRv6KH06Rdd8");
 
         if (!areNotificationsEnabled()) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
